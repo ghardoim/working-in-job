@@ -4,7 +4,7 @@ Attribute Pedra_Filosofal.VB_ProcData.VB_Invoke_Func = "p\n14"
     Range("A1").Select
 
     Dim sPath As String: sPath = InputBox("Cole o endere�o da pasta com as planilhas de dados brutos di�rios, no formato abaixo:", _
-        "Pasta de dados di�rios", "C:\Users\c117012\Desktop\teste\")
+        "Pasta de dados di�rios", "C:\Users\$(whoami)\Desktop\teste\")
         
     ThisWorkbook.Worksheets("Auxiliar").Range("D8").value = sPath
     
