@@ -7,7 +7,8 @@ Aquelas que você pensa: "Podia ter um botão para fazer isso!"
 
 Então, esse botão pode existir!!
 
-Desde tarefas simples, como encontrar e copiar arquivos, até planilhas automatizadas! 
+Desde tarefas simples, como encontrar e copiar arquivos, até planilhas automatizadas!
+
 *(e outras coisas mais do pacote office quem sabe ^-^)*
 
 Automatizando processos e descomplicando tarefas!
