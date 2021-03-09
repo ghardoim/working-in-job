@@ -13,7 +13,7 @@ End Sub
 Private Sub btn_entrada_Click()
   If planilha Is Nothing Then Exit Sub
   planilha.Sheets("ENTRADA").UsedRange.AutoFilter
-  
+
   Me.Hide
   FrmCtrlEntrada.Show
 End Sub
@@ -21,7 +21,7 @@ End Sub
 Private Sub btn_saida_Click()
   If planilha Is Nothing Then Exit Sub
   planilha.Sheets("SAÍDA").UsedRange.AutoFilter
-  
+
   Me.Hide
   FrmCtrlSaida.Show
 End Sub
@@ -38,4 +38,8 @@ End Sub
 
 Private Sub UserForm_Terminate()
   Call liga_desliga(True)
+  If Not planilha Is Nothing Then
+    planilha.Save
+    planilha.Close
+  End If
 End Sub
