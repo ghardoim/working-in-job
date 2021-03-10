@@ -119,6 +119,6 @@ Public Sub liga_desliga(on_off As Boolean)
   End With
 End Sub
 
-Public Sub atualiza_total(lbl As MSForms.Label, aba As Worksheet, coluna As String)
-  lbl.Caption = "R$ " & WorksheetFunction.Sum(aba.Range(coluna & ":" & coluna))
+Public Sub limpar_filtro()
+  planilha.Sheets("AUXILIAR").Range("A1").CurrentRegion.Clear
 End Sub
