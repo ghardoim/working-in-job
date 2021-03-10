@@ -1,9 +1,4 @@
 Private Sub UserForm_Activate()
-  ThisWorkbook.Activate
-  Dim nome As String: nome = ThisWorkbook.Sheets("AUXILIAR").Name
-  Me.cbx_funcionario.RowSource = nome & "!A2:A" & ultima_linha(nome) - 1
-  Me.cbx_tipo.RowSource = nome & "!D2:D" & ultima_linha(nome, "D") - 1
-
   planilha.Activate
   Call atualiza_total(Me.lbl_total, planilha.Sheets("SAÍDA"), "F")
   Call listar(Me.lst_saida, "SAÍDA", 6, "F")
@@ -42,7 +37,7 @@ Private Sub btn_filtrar_Click()
         Call msg_de_nao_preenchido("CLIENTE/FUNCIONÁRIO/TIPO/DESPESA"): Exit Sub
 
   With planilha.Sheets("SAÍDA")
-    planilha.Sheets("AUXILIAR").Range("A1").CurrentRegion.Clear
+    Call limpar_filtro
 
     .UsedRange.AutoFilter
     If Me.txt_cliente <> "" Then Call .UsedRange.AutoFilter(3, "*" & Me.txt_cliente & "*")
