@@ -14,6 +14,7 @@ Public Sub novo_arquivo()
 
   Dim aba_entrada As Worksheet: Set aba_entrada = planilha.Sheets.Add
   Dim aba_saida As Worksheet: Set aba_saida = planilha.Sheets.Add
+  Dim aba_total As Worksheet: Set aba_total = planilha.Sheets.Add
 
   With aba_entrada
     .Name = "ENTRADA"
@@ -26,8 +27,12 @@ Public Sub novo_arquivo()
     .Range("A1:F1") = Array("DATA", "FUNCIONÁRIO", "CLIENTE", "TIPO", "DESPESA", "VALOR")
     Call formata(.Range("A1:F1"))
   End With
-
-  With planilha.Sheets(3)
+  
+  With aba_total
+    .Name = "RESULTADO"
+  End With
+    
+  With planilha.Sheets(4)
     .Name = "AUXILIAR"
     .Visible = False
   End With
