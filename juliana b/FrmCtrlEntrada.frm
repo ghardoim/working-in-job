@@ -45,21 +45,17 @@ Private Sub btn_filtrar_Click()
   If Not eh_valido(Me.txt_cliente) And Not eh_valido(Me.cbx_tipo) And Not eh_valido(Me.cbx_advogado) Then _
       Call msg_de_nao_preenchido("CLIENTE/ADVOGADO/TIPO"): Exit Sub
 
-  With planilha.Sheets("ENTRADA")
-    Call limpar_filtro
-
-    .UsedRange.AutoFilter
-    If Me.txt_cliente <> "" Then Call .UsedRange.AutoFilter(2, "*" & UCase(Me.txt_cliente) & "*")
-    If Me.cbx_advogado <> "" Then Call .UsedRange.AutoFilter(1, Me.cbx_advogado)
-    If Me.cbx_tipo <> "" Then Call .UsedRange.AutoFilter(3, Me.cbx_tipo)
-    .Range("A1").CurrentRegion.Copy planilha.Sheets("AUXILIAR").Range("A1")
-
-    Call listar(Me.lst_entrada, "AUXILIAR", 10)
-  End With
+  Call filtrar("ENTRADA", "*" & Me.txt_cliente & "*", 2, Me.cbx_advogado, 1, Me.cbx_tipo, 3)
+  Call listar(Me.lst_entrada, "AUXILIAR", 10)
 
   Me.lst_entrada.SetFocus
   Call atualiza_total(Me.lbl_total, planilha.Sheets("AUXILIAR"), "J")
   Call limpar_campos
+End Sub
+
+Private Sub btn_limpa_filtro_Click()
+  Call limpar_filtro("ENTRADA")
+  Call listar(Me.lst_saida, "ENTRADA", 10)
 End Sub
 
 Private Sub btn_voltar_Click()

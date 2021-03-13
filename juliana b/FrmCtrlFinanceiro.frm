@@ -65,7 +65,7 @@ Private Sub btn_total_Click()
   With FrmCtrlEntrada
     For i = 0 To .cbx_advogado.ListCount - 1
       For j = 0 To .cbx_tipo.ListCount - 1
-        Call filtrar(.cbx_advogado.List(i), 1, .cbx_tipo.List(j), 3, "ENTRADA")
+        Call filtrar("ENTRADA", .cbx_advogado.List(i), 1, .cbx_tipo.List(j), 3)
         total = atualiza_total(Nothing, planilha.Sheets("AUXILIAR"), "J")
         'escrever numa tabela
         'celula(linha = i + 2, coluna = j + 2)

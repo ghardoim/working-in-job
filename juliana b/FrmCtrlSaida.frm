@@ -36,22 +36,17 @@ Private Sub btn_filtrar_Click()
     Not eh_valido(Me.cbx_funcionario) And Not eh_valido(Me.cbx_tipo) Then _
         Call msg_de_nao_preenchido("CLIENTE/FUNCIONÁRIO/TIPO/DESPESA"): Exit Sub
 
-  With planilha.Sheets("SAÍDA")
-    Call limpar_filtro
-
-    .UsedRange.AutoFilter
-    If Me.txt_cliente <> "" Then Call .UsedRange.AutoFilter(3, "*" & Me.txt_cliente & "*")
-    If Me.txt_despesa <> "" Then Call .UsedRange.AutoFilter(5, "*" & Me.txt_despesa & "*")
-    If Me.cbx_funcionario <> "" Then Call .UsedRange.AutoFilter(2, Me.cbx_funcionario)
-    If Me.cbx_tipo <> "" Then Call .UsedRange.AutoFilter(4, Me.cbx_tipo)
-    .Range("A1").CurrentRegion.Copy planilha.Sheets("AUXILIAR").Range("A1")
-
-    Call listar(Me.lst_saida, "AUXILIAR", 6, "F")
-  End With
+  Call filtrar("SAÍDA", "*" & Me.txt_cliente & "*", 3, "*" & Me.txt_despesa & "*", 5, Me.cbx_funcionario, 2, cbx_tipo, 4)
+  Call listar(Me.lst_saida, "AUXILIAR", 6, "F")
 
   Me.lst_saida.SetFocus
   Call atualiza_total(Me.lbl_total, planilha.Sheets("AUXILIAR"), "F")
   Call limpar_campos
+End Sub
+
+Private Sub btn_limpa_filtro_Click()
+  Call limpar_filtro("SAÍDA")
+  Call listar(Me.lst_saida, "SAÍDA", 6, "F")
 End Sub
 
 Private Sub btn_voltar_Click()
