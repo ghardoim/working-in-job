@@ -37,16 +37,38 @@ Public Sub limpar_filtro(nome_aba As String)
   planilha.Sheets(nome_aba).UsedRange.AutoFilter
 End Sub
 
-Public Sub filtrar(nome_aba As String, filtro_1 As String, col_1 As Integer, filtro_2 As String, col_2 As Integer, _
-        Optional filtro_3 As String = "", Optional col_3 As Integer = 0, Optional filtro_4 As String = "", Optional col_4 As Integer = 0)
+Public Sub filtrar(nome_aba As String, filtro_1 As String, col_1 As Integer, _
+                            Optional filtro_2 As String = "", Optional col_2 As Integer = 0, _
+                          Optional filtro_3 As String = "", Optional col_3 As Integer = 0, _
+                        Optional filtro_4 As String = "", Optional col_4 As Integer = 0)
 
   Call limpar_filtro(nome_aba)
   With planilha.Sheets(nome_aba)
-    If filtro_1 <> "" Then Call .UsedRange.AutoFilter(col_1, filtro_1)
-    If filtro_2 <> "" Then Call .UsedRange.AutoFilter(col_2, filtro_2)
+    If filtro_1 <> "" And filtro_1 <> "**" Then Call .UsedRange.AutoFilter(col_1, filtro_1)
+    If filtro_2 <> "" And filtro_2 <> "**" Then Call .UsedRange.AutoFilter(col_2, filtro_2)
     If filtro_3 <> "" Then Call .UsedRange.AutoFilter(col_3, filtro_3)
     If filtro_4 <> "" Then Call .UsedRange.AutoFilter(col_4, filtro_4)
 
     .Range("A1").CurrentRegion.Copy planilha.Sheets("AUXILIAR").Range("A1")
+  End With
+End Sub
+
+Public Sub cria_tabela(nome As String, coluna As Integer, col_valor As String, _
+                    Optional campo As String = "", Optional posicao As Integer = 0)
+
+  Call planilha.PivotCaches.Create(xlDatabase, nome & "!" & planilha.Sheets(nome).UsedRange.Address) _
+                                        .CreatePivotTable("RESULTADO!R1C" & coluna, "TOTAL " & nome)
+
+  With planilha.Sheets("RESULTADO").PivotTables("TOTAL " & nome)
+    .CompactLayoutRowHeader = nome & "S"
+
+    With .PivotFields("TIPO")
+      .Orientation = xlRowField
+      .Position = 1
+    End With
+    If campo <> "" Then With .PivotFields(campo): .Orientation = xlRowField: .Position = posicao: End With
+
+    Call .AddDataField(.PivotFields("VALOR"), "TOTAIS", xlSum)
+    Columns(col_valor & ":" & col_valor).Style = "Currency"
   End With
 End Sub

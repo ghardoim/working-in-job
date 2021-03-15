@@ -7,7 +7,6 @@ End Sub
 Private Sub btn_adicionar_Click()
   If Not eh_valido(Me.txt_despesa) Then Call msg_de_nao_preenchido("DESPESA", "A"): Exit Sub
   If Not eh_valido(Me.txt_valor) Then Call msg_de_nao_preenchido("VALOR"): Exit Sub
-  If Not eh_valido(Me.txt_data) Then Call msg_de_nao_preenchido("DATA", "A"): Exit Sub
   If Not eh_valido(Me.cbx_tipo) Then Call msg_de_nao_preenchido("TIPO DE DESPESA"): Exit Sub
 
   With planilha.Sheets("SAÍDA")

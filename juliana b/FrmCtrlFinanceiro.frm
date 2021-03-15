@@ -22,6 +22,7 @@ Private Sub btn_fechar_arquivo_Click()
   planilha.Save
   planilha.Close
   Set planilha = Nothing
+  Call MsgBox("PLANILHA DE CONTROLE FECHADA COM SUCESSO", vbInformation, "SUCESSO")
 End Sub
 
 Private Sub btn_entrada_Click()
@@ -43,11 +44,13 @@ End Sub
 Private Sub btn_novo_arquivo_Click()
   Call novo_arquivo
   ThisWorkbook.Activate
+  Call MsgBox("NOVA PLANILHA DE CONTROLE CRIADA COM SUCESSO", vbInformation, "SUCESSO")
 End Sub
 
 Private Sub btn_importar_Click()
   Call abre_arquivo
   ThisWorkbook.Activate
+  Call MsgBox("PLANILHA DE CONTROLE IMPORTADA COM SUCESSO", vbInformation, "SUCESSO")
 End Sub
 
 Private Sub UserForm_Terminate()
@@ -60,17 +63,12 @@ End Sub
 
 Private Sub btn_total_Click()
   If planilha Is Nothing Then Exit Sub
-  Dim i As Integer, j As Integer, total As Double
-  
-  With FrmCtrlEntrada
-    For i = 0 To .cbx_advogado.ListCount - 1
-      For j = 0 To .cbx_tipo.ListCount - 1
-        Call filtrar("ENTRADA", .cbx_advogado.List(i), 1, .cbx_tipo.List(j), 3)
-        total = atualiza_total(Nothing, planilha.Sheets("AUXILIAR"), "J")
-        'escrever numa tabela
-        'celula(linha = i + 2, coluna = j + 2)
-        MsgBox "ADVOGADO: " & .cbx_advogado.List(i) & " / TIPO: " & .cbx_tipo.List(j) & vbNewLine & "TOTAL: " & total
-      Next
-    Next
-  End With
+
+  planilha.Activate
+  If planilha.PivotCaches.Count > 0 Then planilha.Sheets("RESULTADO").UsedRange.ClearContents
+
+  Call cria_tabela("ENTRADA", 1, "B", "ADVOGADO", 2)
+  Call cria_tabela("SAÍDA", 4, "E")  
+
+  Call MsgBox("TOTAL CALCULADO COM SUCESSO", vbInformation, "SUCESSO")
 End Sub
