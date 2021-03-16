@@ -10,15 +10,17 @@ Public Function eh_valido(campo As Object) As Boolean
   If campo.Value = "" Or campo.Value = False Or campo.Value = 0 Then campo.SetFocus: eh_valido = False
 End Function
 
-Public Function ultima_linha(nome_aba As String, Optional coluna As String = "A") As Integer
-  ultima_linha = Sheets(nome_aba).Range(coluna & ULTIMA_CELULA).End(xlUp).Row + 1
+Public Function ultima_linha(nome_aba As String, Optional coluna As String = "A", Optional plan As Workbook = Nothing) As Integer
+  If plan Is Nothing Then Set plan = ThisWorkbook
+  ultima_linha = plan.Sheets(nome_aba).Range(coluna & ULTIMA_CELULA).End(xlUp).Row + 1
 End Function
 
 Public Sub listar(tela As MSForms.ListBox, nome_aba As String, numero_de_colunas As Integer, Optional col_fim As String = "J")
+  planilha.Activate
   With tela
     .ColumnCount = numero_de_colunas
     .ColumnHeads = True
-    .RowSource = nome_aba & "!A2:" & col_fim & ultima_linha(nome_aba, col_fim)
+    .RowSource = nome_aba & "!A2:" & col_fim & ultima_linha(nome_aba, col_fim, planilha)
   End With
 End Sub
 

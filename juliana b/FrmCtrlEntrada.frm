@@ -1,5 +1,4 @@
 Private Sub UserForm_Activate()
-  planilha.Activate
   Call atualiza_total(Me.lbl_total, planilha.Sheets("ENTRADA"), "J")
   Call listar(Me.lst_entrada, "ENTRADA", 10)
 End Sub
@@ -13,8 +12,9 @@ Private Sub btn_adicionar_Click()
 
   With planilha.Sheets("ENTRADA")
 
-    Dim ultLin_entrada As Integer: ultLin_entrada = ultima_linha(.Name)
-    Dim imposto As Double: imposto = Me.txt_valor_ref.Value * (Me.txt_imposto.Value / 100)
+    Dim ultLin_entrada As Integer: ultLin_entrada = ultima_linha(.Name, plan:=planilha)
+    Dim valor As Double: valor = Me.txt_valor_ref.Value
+    Dim imposto As Double: imposto = valor * (Me.txt_imposto.Value / 100)
     Dim valor_pago As Double: If Me.txt_valor_pag.Value <> "" Then valor_pago = Me.txt_valor_pag.Value _
                       Else valor_pago = 0: imposto = 0: .Range("A" & ultLin_entrada & ":J" & ultLin_entrada).Interior.Color = 255
         
@@ -27,7 +27,7 @@ Private Sub btn_adicionar_Click()
     If ckb_nfe Then .Cells(ultLin_entrada, 6) = "-"
 
     .Columns("G:J").NumberFormat = "$#,##0.00"
-    .Cells(ultLin_entrada, 7) = Me.txt_valor_ref.Value
+    .Cells(ultLin_entrada, 7) = valor
     .Cells(ultLin_entrada, 8) = valor_pago
     .Cells(ultLin_entrada, 9) = imposto
     .Cells(ultLin_entrada, 10) = valor_pago - imposto
