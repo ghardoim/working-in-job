@@ -1,5 +1,4 @@
 Private Sub UserForm_Activate()
-  planilha.Activate
   Call atualiza_total(Me.lbl_total, planilha.Sheets("SAÍDA"), "F")
   Call listar(Me.lst_saida, "SAÍDA", 6, "F")
 End Sub
@@ -10,7 +9,7 @@ Private Sub btn_adicionar_Click()
   If Not eh_valido(Me.cbx_tipo) Then Call msg_de_nao_preenchido("TIPO DE DESPESA"): Exit Sub
 
   With planilha.Sheets("SAÍDA")
-    Dim ultLin_saida As Integer: ultLin_saida = ultima_linha(.Name)
+    Dim ultLin_saida As Integer: ultLin_saida = ultima_linha(.Name, "F", planilha)
     Dim opcao As Object: Set opcao = Nothing
 
     .Cells(ultLin_saida, 1) = Me.txt_data.Value

@@ -14,7 +14,7 @@ Public Sub novo_arquivo()
 
   Dim aba_entrada As Worksheet: Set aba_entrada = planilha.Sheets.Add
   Dim aba_saida As Worksheet: Set aba_saida = planilha.Sheets.Add
-  Dim aba_total As Worksheet: Set aba_total = planilha.Sheets.Add
+  Dim aba_total As Worksheet: Set aba_total = planilha.Sheets.Add: aba_total.Name = "RESULTADO"
 
   With aba_entrada
     .Name = "ENTRADA"
@@ -27,18 +27,18 @@ Public Sub novo_arquivo()
     .Range("A1:F1") = Array("DATA", "FUNCIONÁRIO", "CLIENTE", "TIPO", "DESPESA", "VALOR")
     Call formata(.Range("A1:F1"))
   End With
-  
-  With aba_total
-    .Name = "RESULTADO"
-  End With
     
   With planilha.Sheets(4)
     .Name = "AUXILIAR"
     .Visible = False
   End With
 
-  Call planilha.SaveAs("FINANCEIRO #" & UCase(MonthName(Month(Date), True)) & Right(Year(Date), 2), xlOpenXMLWorkbookMacroEnabled)
   Call liga_desliga(False)
+  Call planilha.SaveAs("FINANCEIRO #" & UCase(MonthName(Month(Date), True)) & Right(Year(Date), 2), xlOpenXMLWorkbookMacroEnabled)
+  Dim novo As String: novo = planilha.FullName: Call excelAPP.Quit
+  Set planilha = Workbooks.Open(novo, IgnoreReadOnlyRecommended:=True)
+  Call liga_desliga(False)
+  
 End Sub
 
 Private Sub linhas_de_borda(borda As Border)
@@ -73,12 +73,9 @@ End Sub
 
 Private Function PasswordInit() As String
 
-  PasswordInit = "Private Sub Workbook_Open()" & vbNewLine & "With Application" & vbNewLine & _
-                  ".DisplayAlerts = False" & vbNewLine & ".Visible = False" & vbNewLine & _
-                  "Dim senha As String: senha = ""******""" & vbNewLine & _
-                  "Dim resposta As String: resposta = InputBox(""INFORME A SENHA PARA INICIAR"", ""SENHA"")" & vbNewLine & _
-                  "If senha <> resposta Then" & vbNewLine & "MsgBox (""VOCÊ NÃO TEM ACESSO A ESSA INFORMAÇÃO"")" & vbNewLine & _
-                  ".Quit" & vbNewLine & "End If:" & vbNewLine & ".DisplayAlerts = True" & vbNewLine & _
-                  ".Visible = True" & vbNewLine & "End With" & vbNewLine & "End Sub"
+  PasswordInit = "Private Sub Workbook_Open()" & vbNewLine & "Dim senha As String: senha = ""julianab""" & vbNewLine & _
+    "Dim resposta As String: resposta = InputBox(""INFORME A SENHA PARA INICIAR"", ""SENHA"")" & vbNewLine & _
+    "If senha <> resposta Then" & vbNewLine & "MsgBox (""VOCÊ NÃO TEM ACESSO A ESSA INFORMAÇÃO"")" & vbNewLine & _
+    "End If" & vbNewLine & "End Sub"
 
 End Function

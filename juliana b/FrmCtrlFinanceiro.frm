@@ -1,5 +1,5 @@
 Private Sub UserForm_Initialize()
-  Dim nome As String: nome = ThisWorkbook.Sheets("AUXILIAR").Name
+  Dim nome As String: nome = ThisWorkbook.Sheets("AUX").Name
   
   With FrmCtrlEntrada
     .cbx_advogado.RowSource = nome & "!B2:B" & ultima_linha(nome, "B") - 1
@@ -13,7 +13,7 @@ Private Sub UserForm_Initialize()
     .cbx_tipo.RowSource = nome & "!D2:D" & ultima_linha(nome, "D") - 1
   End With
 
-  Me.lbl_total.Caption = "R$ " & ThisWorkbook.Sheets("AUXILIAR").Range("E2")
+  Me.lbl_total.Caption = "R$ " & ThisWorkbook.Sheets("AUX").Range("E2")
   Me.lbl_titulo = "BEM - VINDO " & UCase(Application.UserName)
 End Sub
 
@@ -27,16 +27,14 @@ End Sub
 
 Private Sub btn_entrada_Click()
   If planilha Is Nothing Then Exit Sub
-  planilha.Sheets("ENTRADA").UsedRange.AutoFilter
-
+  Call limpar_filtro("ENTRADA")
   Me.Hide
   FrmCtrlEntrada.Show
 End Sub
 
 Private Sub btn_saida_Click()
   If planilha Is Nothing Then Exit Sub
-  planilha.Sheets("SAÍDA").UsedRange.AutoFilter
-
+  Call limpar_filtro("SAÍDA")
   Me.Hide
   FrmCtrlSaida.Show
 End Sub
@@ -64,7 +62,6 @@ End Sub
 Private Sub btn_total_Click()
   If planilha Is Nothing Then Exit Sub
 
-  planilha.Activate
   If planilha.PivotCaches.Count > 0 Then planilha.Sheets("RESULTADO").UsedRange.ClearContents
 
   Call cria_tabela("ENTRADA", 1, "B", "ADVOGADO", 2)
