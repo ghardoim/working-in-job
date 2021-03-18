@@ -55,22 +55,26 @@ Public Sub filtrar(nome_aba As String, filtro_1 As String, col_1 As Integer, _
   End With
 End Sub
 
-Public Sub cria_tabela(nome As String, coluna As Integer, col_valor As String, _
-                    Optional campo As String = "", Optional posicao As Integer = 0)
+Public Sub cria_tabela(nome_aba As String, col_posicionamento As Integer, nome_campo_total As String, col_formatar_valor As String, _
+                        Optional nome_campo As String = "", Optional posicao_campo As Integer = 0, _
+                        Optional outro_total As String = "", Optional outra_col_format As String = "")
+    
+  Call planilha.PivotCaches.Create(xlDatabase, nome_aba & "!" & planilha.Sheets(nome_aba).UsedRange.Address) _
+                                .CreatePivotTable("RESULTADO!R1C" & col_posicionamento, "TOTAL " & nome_aba)
 
-  Call planilha.PivotCaches.Create(xlDatabase, nome & "!" & planilha.Sheets(nome).UsedRange.Address) _
-                                        .CreatePivotTable("RESULTADO!R1C" & coluna, "TOTAL " & nome)
-
-  With planilha.Sheets("RESULTADO").PivotTables("TOTAL " & nome)
-    .CompactLayoutRowHeader = nome & "S"
-
+  With planilha.Sheets("RESULTADO").PivotTables("TOTAL " & nome_aba)
+    .CompactLayoutRowHeader = nome_aba & "S"
+    .DataPivotField.Caption = " "
+    
     With .PivotFields("TIPO")
       .Orientation = xlRowField
       .Position = 1
     End With
-    If campo <> "" Then With .PivotFields(campo): .Orientation = xlRowField: .Position = posicao: End With
 
-    Call .AddDataField(.PivotFields("VALOR"), "TOTAIS", xlSum)
-    Columns(col_valor & ":" & col_valor).Style = "Currency"
+    If nome_campo <> "" Then With .PivotFields(nome_campo): .Orientation = xlRowField: .Position = posicao_campo: End With
+    Call .AddDataField(.PivotFields(nome_campo_total), "TOTAIS", xlSum)
+    If outro_total <> "" Then Call .AddDataField(.PivotFields(outro_total), "IMPOSTOS", xlSum)
+    If outra_col_format <> "" Then Columns(outra_col_format & ":" & outra_col_format).Style = "Currency"
+    Columns(col_formatar_valor & ":" & col_formatar_valor).Style = "Currency"
   End With
 End Sub

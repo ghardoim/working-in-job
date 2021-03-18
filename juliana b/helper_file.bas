@@ -5,7 +5,6 @@ Public Sub abre_arquivo()
 End Sub
 
 Public Sub novo_arquivo()
-
   Dim excelAPP As Application: Set excelAPP = New Excel.Application
   Set planilha = excelAPP.Workbooks.Add
 
@@ -38,7 +37,6 @@ Public Sub novo_arquivo()
   Dim novo As String: novo = planilha.FullName: Call excelAPP.Quit
   Set planilha = Workbooks.Open(novo, IgnoreReadOnlyRecommended:=True)
   Call liga_desliga(False)
-  
 End Sub
 
 Private Sub linhas_de_borda(borda As Border)
@@ -58,8 +56,8 @@ Private Sub formata(cabecalho As Range)
     With .Interior
       .Pattern = xlSolid
       .PatternColorIndex = xlAutomatic
-      .ThemeColor = xlThemeColorDark2
-      .TintAndShade = -9.99786370433668E-02
+      .Color = RGB(217, 225, 242)
+      .TintAndShade = 0
       .PatternTintAndShade = 0
     End With
     Call linhas_de_borda(.Borders(xlEdgeLeft))
@@ -72,10 +70,8 @@ Private Sub formata(cabecalho As Range)
 End Sub
 
 Private Function PasswordInit() As String
-
   PasswordInit = "Private Sub Workbook_Open()" & vbNewLine & "Dim senha As String: senha = ""julianab""" & vbNewLine & _
     "Dim resposta As String: resposta = InputBox(""INFORME A SENHA PARA INICIAR"", ""SENHA"")" & vbNewLine & _
     "If senha <> resposta Then" & vbNewLine & "MsgBox (""VOCÊ NÃO TEM ACESSO A ESSA INFORMAÇÃO"")" & vbNewLine & _
     "End If" & vbNewLine & "End Sub"
-
 End Function
