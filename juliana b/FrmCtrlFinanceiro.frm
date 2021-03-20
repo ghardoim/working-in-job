@@ -43,7 +43,8 @@ Private Sub btn_novo_arquivo_Click()
   If Not planilha Is Nothing Then Exit Sub
   Call novo_arquivo
   ThisWorkbook.Activate
-  Call MsgBox("NOVA PLANILHA DE CONTROLE CRIADA COM SUCESSO", vbInformation, "SUCESSO")
+  Call MsgBox("NOVA PLANILHA DE CONTROLE CRIADA COM SUCESSO EM MEUS DOCUMENTOS" & vbNewLine & _
+        vbNewLine & "PARA CONTINUAR, ABRA O ARQUIVO GERADO.", vbInformation, "SUCESSO")
 End Sub
 
 Private Sub btn_importar_Click()
@@ -62,6 +63,7 @@ Private Sub UserForm_Terminate()
 End Sub
 
 Private Sub btn_total_Click()
+  On Error Resume Next
   If planilha Is Nothing Then Exit Sub
 
   If planilha.PivotCaches.Count > 0 Then planilha.Sheets("RESULTADO").UsedRange.ClearContents
@@ -82,8 +84,9 @@ Private Sub btn_total_Click()
         For j = 0 To FrmCtrlEntrada.cbx_advogado.ListCount - 1
 
           Dim advogado As String: advogado = FrmCtrlEntrada.cbx_advogado.List(j)
-          Dim valor As Double: valor = .GetPivotData("VALOR LÍQUIDO", "TIPO", FrmCtrlEntrada.cbx_tipo.List(i), "ADVOGADO", advogado)
-
+          Dim valor As Double: valor = 0
+          valor = .GetPivotData("VALOR LÍQUIDO", "TIPO", FrmCtrlEntrada.cbx_tipo.List(i), "ADVOGADO", advogado)
+                    
           Select Case advogado
             Case "BRUNO"
               total_bruno = add_no_(total_bruno, 0.6, valor)
@@ -108,15 +111,16 @@ Private Sub btn_total_Click()
             Case Else
               Call MsgBox("O ADVOGADO " & advogado & " NÃO TEM NENHUMA REGRA DE LUCRO CADASTRADA", vbExclamation, "REGRA NÃO CADASTRADA")
           End Select
-
-          total_isa = add_no_(total_isa, 0.2, total_bruno)
-          total_isa = add_no_(total_isa, 0.2, total_paulo)
         Next
       Next
+
+      total_isa = add_no_(total_isa, 0.02, total_bruno) + add_no_(total_isa, 0.02, total_paulo)
+      total_bruno = add_no_(total_bruno, -0.02, total_bruno)
+      total_paulo = add_no_(total_paulo, -0.02, total_paulo)
     End With
-    .Range("F8").Value = "BRUNO: " & total_bruno
-    .Range("F9").Value = "PAULO: " & total_paulo
-    .Range("F10").Value = "ISABELA" & total_isa
+
+    .Range("E" & ultima_linha("RESULTADO", "E", planilha) + 2) = "BRUNO: " & total_bruno
+    .Range("E" & ultima_linha("RESULTADO", "E", planilha)) = "PAULO: " & total_paulo
 
     With .PivotTables("TOTAL ENTRADA")
 
@@ -124,8 +128,9 @@ Private Sub btn_total_Click()
       Dim n As Integer
       For n = 0 To FrmCtrlSaida.cbx_tipo.ListCount - 1
         Dim tipo_saida As String: tipo_saida = FrmCtrlSaida.cbx_tipo.List(n)
-        Dim valor_saida As Double: valor_saida = .GetPivotData("VALOR LÍQUIDO", "TIPO", tipo_saida)
-
+        Dim valor_saida As Double: valor_saida = 0
+        valor_saida = .GetPivotData("VALOR", "TIPO", tipo_saida)
+                
         Select Case tipo_saida
           Case "CONTA À PARTE"
             fundo_escritorio = fundo_escritorio - valor
@@ -140,10 +145,11 @@ Private Sub btn_total_Click()
 
     End With
 
-    .Range("F11").Value = "BRUNO - DESPESAS: " & total_bruno
-    .Range("F12").Value = "PAULO - DESPESAS: " & total_paulo
-
+    .Range("E" & ultima_linha("RESULTADO", "E", planilha)) = "ISABELA" & total_isa
+    .Range("E" & ultima_linha("RESULTADO", "E", planilha) + 1) = "BRUNO - DESPESAS: " & total_bruno
+    .Range("E" & ultima_linha("RESULTADO", "E", planilha) + 1) = "PAULO - DESPESAS: " & total_paulo
   End With
 
   Call MsgBox("TOTAL CALCULADO COM SUCESSO", vbInformation, "SUCESSO")
+  On Error GoTo 0
 End Sub

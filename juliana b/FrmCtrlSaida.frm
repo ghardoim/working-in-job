@@ -18,6 +18,18 @@ Private Sub btn_adicionar_Click()
     .Cells(ultLin_saida, 4) = Me.cbx_tipo.Value
     .Cells(ultLin_saida, 5) = UCase(Me.txt_despesa.Value)
 
+    With planilha.Sheets("EXTRATO")
+      Dim ultLin_extrato As Integer: ultLin_extrato = ultima_linha(.Name, "E", planilha)
+      .Cells(ultLin_extrato, 1) = Me.txt_data.Value
+      .Cells(ultLin_extrato, 2) = Me.cbx_funcionario.Value
+      .Cells(ultLin_extrato, 4) = Me.txt_cliente.Value
+      .Cells(ultLin_extrato, 5) = Me.txt_despesa.Value
+      With .Cells(ultLin_extrato, 6)
+        .Value = Me.txt_valor.Value
+        .Style = "Currency"
+      End With
+    End With
+
     .Columns("F:F").NumberFormat = "$#,##0.00"
     .Cells(ultLin_saida, 6) = Me.txt_valor.Value
 

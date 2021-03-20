@@ -1,5 +1,4 @@
 Public planilha As Workbook
-Public Const ULTIMA_CELULA As String = "1048576"
 
 Public Sub msg_de_nao_preenchido(nome As String, Optional oa As String = "O")
   Call MsgBox("POR FAVOR, INFORME " & oa & " " & nome & "!", vbExclamation, nome & " NÃO INFORMADO")
@@ -12,7 +11,7 @@ End Function
 
 Public Function ultima_linha(nome_aba As String, Optional coluna As String = "A", Optional plan As Workbook = Nothing) As Integer
   If plan Is Nothing Then Set plan = ThisWorkbook
-  ultima_linha = plan.Sheets(nome_aba).Range(coluna & ULTIMA_CELULA).End(xlUp).Row + 1
+  ultima_linha = plan.Sheets(nome_aba).Range(coluna & "1048576").End(xlUp).Row + 1
 End Function
 
 Public Sub listar(tela As MSForms.ListBox, nome_aba As String, numero_de_colunas As Integer, Optional col_fim As String = "J")
@@ -70,10 +69,19 @@ Public Sub cria_tabela(nome_aba As String, col_posicionamento As Integer, nome_c
       .Orientation = xlRowField
       .Position = 1
     End With
-
     If nome_campo <> "" Then With .PivotFields(nome_campo): .Orientation = xlRowField: .Position = posicao_campo: End With
+    
     Call .AddDataField(.PivotFields(nome_campo_total), "TOTAIS", xlSum)
     If outro_total <> "" Then Call .AddDataField(.PivotFields(outro_total), "IMPOSTOS", xlSum)
+
+    With .PivotFields(nome_campo_total)
+      .Orientation = xlPageField
+      .Position = 1
+      .CurrentPage = "(All)"
+      .PivotItems("$0.00").Visible = False
+      .EnableMultiplePageItems = True
+    End With
+
     If outra_col_format <> "" Then Columns(outra_col_format & ":" & outra_col_format).Style = "Currency"
     Columns(col_formatar_valor & ":" & col_formatar_valor).Style = "Currency"
   End With

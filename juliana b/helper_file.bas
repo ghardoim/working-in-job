@@ -27,15 +27,19 @@ Public Sub novo_arquivo()
     Call formata(.Range("A1:F1"))
   End With
     
-  With planilha.Sheets(4)
+  With aba_extrato
+    .Name = "EXTRATO"
+    .Range("A1:H1") = Array("DATA", "FUNCIONÁRIO", "REEMBOLSO", "CLIENTE", "ESPECIFICAÇÃO", "CRÉDITO", "DÉBITO", "SALDO")
+    Call formata(.Range("A1:H1"))
+  End With
+  
+  With planilha.Sheets(5)
     .Name = "AUXILIAR"
     .Visible = False
   End With
 
-  Call liga_desliga(False)
   Call planilha.SaveAs("FINANCEIRO #" & UCase(MonthName(Month(Date), True)) & Right(Year(Date), 2), xlOpenXMLWorkbookMacroEnabled)
-  Dim novo As String: novo = planilha.FullName: Call excelAPP.Quit
-  Set planilha = Workbooks.Open(novo, IgnoreReadOnlyRecommended:=True)
+  Call planilha.Close: Call excelAPP.Quit: Set planilha = Nothing
   Call liga_desliga(False)
 End Sub
 
