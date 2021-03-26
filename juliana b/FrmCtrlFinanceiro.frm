@@ -105,7 +105,7 @@ Private Sub btn_total_Click()
               total_paulo = add_no_(total_paulo, 0.5, valor)
               total_bruno = add_no_(total_bruno, 0.5, valor)
 
-            Case "CONTA À PARTE"
+            Case "CONTA À PARTE" Or "REEMBOLSO"
               fundo_escritorio = fundo_escritorio + valor
 
             Case Else
@@ -132,7 +132,7 @@ Private Sub btn_total_Click()
         valor_saida = .GetPivotData("VALOR", "TIPO", tipo_saida)
                 
         Select Case tipo_saida
-          Case "CONTA À PARTE"
+          Case "CONTA À PARTE" Or "REEMBOLSO"
             fundo_escritorio = fundo_escritorio - valor
 
           Case Else

@@ -17,7 +17,9 @@ Private Sub btn_adicionar_Click()
     Dim imposto As Double: imposto = valor * (Me.txt_imposto.Value / 100)
     Dim valor_pago As Double: If Me.txt_valor_pag.Value <> "" Then valor_pago = Me.txt_valor_pag.Value _
                       Else valor_pago = 0: imposto = 0: .Range("A" & ultLin_entrada & ":J" & ultLin_entrada).Interior.Color = 255
-        
+
+    If "REEMBOLSO" = Me.cbx_tipo Then imposto = 0
+
     .Cells(ultLin_entrada, 1) = Me.cbx_advogado.Value
     .Cells(ultLin_entrada, 2) = UCase(Me.txt_cliente.Value)
     .Cells(ultLin_entrada, 3) = Me.cbx_tipo.Value
