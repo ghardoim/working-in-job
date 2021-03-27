@@ -70,7 +70,7 @@ Private Sub btn_total_Click()
   Call cria_tabela("ENTRADA", 1, "VALOR LÍQUIDO", "B", "ADVOGADO", 2, "IMPOSTO", "C")
   Call cria_tabela("SAÍDA", 5, "VALOR", "F")
 
-  Dim fundo_escritorio As Double: fundo_escritorio = Me.lbl_total.Value
+  Dim fundo_escritorio As Double: fundo_escritorio = Me.lbl_total
   Dim total_bruno As Double: total_bruno = 0
   Dim total_paulo As Double: total_bruno = 0
   Dim total_isa As Double: total_isa = 0
@@ -78,42 +78,46 @@ Private Sub btn_total_Click()
   With planilha.Sheets("RESULTADO")
     With .PivotTables("TOTAL ENTRADA")
 
-      Dim i As Integer
-      For i = 0 To FrmCtrlEntrada.cbx_tipo.ListCount - 1
-        Dim j As Integer
-        For j = 0 To FrmCtrlEntrada.cbx_advogado.ListCount - 1
+      Dim tipo_entrada As PivotItem
+      For Each tipo_entrada In .PivotFields("TIPO").PivotItems()
 
-          Dim advogado As String: advogado = FrmCtrlEntrada.cbx_advogado.List(j)
-          Dim valor As Double: valor = 0
-          valor = .GetPivotData("VALOR LÍQUIDO", "TIPO", FrmCtrlEntrada.cbx_tipo.List(i), "ADVOGADO", advogado)
-                    
-          Select Case advogado
+        Dim advogado As PivotItem
+        For Each advogado In .PivotFields("ADVOGADO").PivotItems()
+
+          Dim valor_entrada As Double: valor_entrada = 0
+          valor_entrada = .GetPivotData("VALOR LÍQUIDO", "TIPO", tipo_entrada.Caption, "ADVOGADO", advogado.Caption)
+          If 0 = valor_entrada Then GoTo Continue
+
+          If "CONTA À PARTE" = tipo_entrada.Caption Or "REEMBOLSO" = tipo_entrada.Caption Then
+              'LUCROS CONTA À PARTE -> CRÉDITO DIRETO NO FUNDO DO ESCRITÓRIO
+              fundo_escritorio = fundo_escritorio + valor_entrada
+              GoTo Continue
+          End If
+
+          Select Case advogado.Caption
             Case "BRUNO"
-              total_bruno = add_no_(total_bruno, 0.6, valor)
-              total_paulo = add_no_(total_paulo, 0.4, valor)
+              total_bruno = add_no_(total_bruno, 0.6, valor_entrada)
+              total_paulo = add_no_(total_paulo, 0.4, valor_entrada)
 
             Case "PAULO"
-              total_paulo = add_no_(total_paulo, 0.6, valor)
-              total_bruno = add_no_(total_bruno, 0.4, valor)
-
+              total_paulo = add_no_(total_paulo, 0.6, valor_entrada)
+              total_bruno = add_no_(total_bruno, 0.4, valor_entrada)
+          
             Case "ISABELA"
-              total_isa = add_no_(total_isa, 0.5, valor)
-              total_paulo = add_no_(total_paulo, 0.25, valor)
-              total_bruno = add_no_(total_bruno, 0.25, valor)
+              total_isa = add_no_(total_isa, 0.5, valor_entrada)
+              total_paulo = add_no_(total_paulo, 0.25, valor_entrada)
+              total_bruno = add_no_(total_bruno, 0.25, valor_entrada)
 
             Case "BRUNO & PAULO"
-              total_paulo = add_no_(total_paulo, 0.5, valor)
-              total_bruno = add_no_(total_bruno, 0.5, valor)
-
-            Case "CONTA À PARTE" Or "REEMBOLSO"
-              fundo_escritorio = fundo_escritorio + valor
+              total_paulo = add_no_(total_paulo, 0.5, valor_entrada)
+              total_bruno = add_no_(total_bruno, 0.5, valor_entrada)
 
             Case Else
-              Call MsgBox("O ADVOGADO " & advogado & " NÃO TEM NENHUMA REGRA DE LUCRO CADASTRADA", vbExclamation, "REGRA NÃO CADASTRADA")
+              Call MsgBox("O ADVOGADO " & advogado.Caption & " NÃO TEM NENHUMA REGRA DE LUCRO CADASTRADA", vbExclamation, "REGRA NÃO CADASTRADA")
           End Select
+Continue:
         Next
       Next
-
       total_isa = add_no_(total_isa, 0.02, total_bruno) + add_no_(total_isa, 0.02, total_paulo)
       total_bruno = add_no_(total_bruno, -0.02, total_bruno)
       total_paulo = add_no_(total_paulo, -0.02, total_paulo)
@@ -122,30 +126,28 @@ Private Sub btn_total_Click()
     .Range("E" & ultima_linha("RESULTADO", "E", planilha) + 2) = "BRUNO: " & total_bruno
     .Range("E" & ultima_linha("RESULTADO", "E", planilha)) = "PAULO: " & total_paulo
 
-    With .PivotTables("TOTAL ENTRADA")
+    With .PivotTables("TOTAL SAÍDA")
 
       Dim total_saida As Double: total_saida = 0
-      Dim n As Integer
-      For n = 0 To FrmCtrlSaida.cbx_tipo.ListCount - 1
-        Dim tipo_saida As String: tipo_saida = FrmCtrlSaida.cbx_tipo.List(n)
+
+      Dim tipo_saida As PivotItem
+      For Each tipo_saida In .PivotFields("TIPO").PivotItems()
+
         Dim valor_saida As Double: valor_saida = 0
         valor_saida = .GetPivotData("VALOR", "TIPO", tipo_saida)
-                
-        Select Case tipo_saida
-          Case "CONTA À PARTE" Or "REEMBOLSO"
-            fundo_escritorio = fundo_escritorio - valor
 
-          Case Else
-            total_saida = total_saida + valor_saida
-        End Select
+        If "CONTA À PARTE" = tipo_saida Or "REEMBOLSO" = tipo_saida Then
+          fundo_escritorio = fundo_escritorio - valor_saida
+        Else
+          total_saida = total_saida + valor_saida
+        End If
       Next
 
       total_bruno = add_no_(total_bruno, -0.5, total_saida)
       total_paulo = add_no_(total_paulo, -0.5, total_saida)
-
     End With
 
-    .Range("E" & ultima_linha("RESULTADO", "E", planilha)) = "ISABELA" & total_isa
+    .Range("E" & ultima_linha("RESULTADO", "E", planilha)) = "ISABELA: " & total_isa
     .Range("E" & ultima_linha("RESULTADO", "E", planilha) + 1) = "BRUNO - DESPESAS: " & total_bruno
     .Range("E" & ultima_linha("RESULTADO", "E", planilha) + 1) = "PAULO - DESPESAS: " & total_paulo
   End With
