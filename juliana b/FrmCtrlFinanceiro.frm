@@ -92,6 +92,10 @@ Private Sub btn_total_Click()
               'LUCROS CONTA À PARTE -> CRÉDITO DIRETO NO FUNDO DO ESCRITÓRIO
               fundo_escritorio = fundo_escritorio + valor_entrada
               GoTo Continue
+
+          ElseIf "MENSALIDADE" = tipo_entrada.Caption Or "HONORÁRIOS" = tipo_entrada.Caption Then
+            valor_entrada = add_no_(valor_entrada, -0.05, valor_entrada)
+            fundo_escritorio = add_no_(fundo_escritorio, 0.05, valor_entrada)
           End If
 
           Select Case advogado.Caption
@@ -152,6 +156,7 @@ Continue:
     .Range("E" & ultima_linha("RESULTADO", "E", planilha) + 1) = "PAULO - DESPESAS: " & total_paulo
   End With
 
+  ThisWorkbook.Sheets("AUX").Range("E2") = fundo_escritorio
   Call MsgBox("TOTAL CALCULADO COM SUCESSO", vbInformation, "SUCESSO")
   On Error GoTo 0
 End Sub

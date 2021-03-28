@@ -25,17 +25,24 @@ Private Sub btn_adicionar_Click()
     .Cells(ultLin_entrada, 3) = Me.cbx_tipo.Value
     .Cells(ultLin_entrada, 4) = Me.txt_vencimento.Value
 
+    Dim novo_fundo As Double: novo_fundo = FrmCtrlFinanceiro.lbl_total
     With planilha.Sheets("EXTRATO")
       Dim ultLin_extrato As Integer: ultLin_extrato = ultima_linha(.Name, "E", planilha)
       .Cells(ultLin_extrato, 1) = Me.txt_vencimento.Value
       .Cells(ultLin_extrato, 2) = Me.cbx_advogado.Value
-      .Cells(ultLin_extrato, 4) = Me.txt_cliente.Value
+      .Cells(ultLin_extrato, 4) = UCase(Me.txt_cliente.Value)
       .Cells(ultLin_extrato, 5) = Me.cbx_tipo.Value
       With .Cells(ultLin_extrato, 6)
         .Value = valor_pago - imposto
         .Style = "Currency"
       End With
+      novo_fundo = novo_fundo + (valor_pago - imposto)
+      With .Cells(ultLin_extrato, 8)
+        .Value = novo_fundo
+        .Style = "Currency"
+      End With
     End With
+    FrmCtrlFinanceiro.lbl_total.Caption = "R$ " & novo_fundo
 
     If ckb_boleto Then .Cells(ultLin_entrada, 5) = "-"
     If ckb_nfe Then .Cells(ultLin_entrada, 6) = "-"

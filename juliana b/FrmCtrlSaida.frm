@@ -13,22 +13,29 @@ Private Sub btn_adicionar_Click()
     Dim opcao As Object: Set opcao = Nothing
 
     .Cells(ultLin_saida, 1) = Me.txt_data.Value
-    .Cells(ultLin_saida, 2) = UCase(Me.cbx_funcionario.Value)
+    .Cells(ultLin_saida, 2) = Me.cbx_funcionario.Value
     .Cells(ultLin_saida, 3) = UCase(Me.txt_cliente.Value)
     .Cells(ultLin_saida, 4) = Me.cbx_tipo.Value
     .Cells(ultLin_saida, 5) = UCase(Me.txt_despesa.Value)
 
+    Dim novo_fundo As Double: novo_fundo = FrmCtrlFinanceiro.lbl_total
     With planilha.Sheets("EXTRATO")
       Dim ultLin_extrato As Integer: ultLin_extrato = ultima_linha(.Name, "E", planilha)
       .Cells(ultLin_extrato, 1) = Me.txt_data.Value
       .Cells(ultLin_extrato, 2) = Me.cbx_funcionario.Value
-      .Cells(ultLin_extrato, 4) = Me.txt_cliente.Value
-      .Cells(ultLin_extrato, 5) = Me.txt_despesa.Value
+      .Cells(ultLin_extrato, 4) = UCase(Me.txt_cliente.Value)
+      .Cells(ultLin_extrato, 5) = UCase(Me.txt_despesa.Value)
       With .Cells(ultLin_extrato, 6)
         .Value = Me.txt_valor.Value
         .Style = "Currency"
       End With
+      novo_fundo = novo_fundo - Me.txt_valor.Value
+      With .Cells(ultLin_extrato, 8)
+        .Value = novo_fundo
+        .Style = "Currency"
+      End With
     End With
+    FrmCtrlFinanceiro.lbl_total.Caption = "R$ " & novo_fundo
 
     .Columns("F:F").NumberFormat = "$#,##0.00"
     .Cells(ultLin_saida, 6) = Me.txt_valor.Value
