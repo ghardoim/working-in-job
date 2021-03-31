@@ -4,6 +4,7 @@ Private Sub UserForm_Activate()
 End Sub
 
 Private Sub lst_saida_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
+  Dim indices() As Variant: indices = Array(4, 5, "E", 6, "E", "G", "F")
   Call excluir_linha(Me.lst_saida, "SAÍDA", indices)
 End Sub
 
