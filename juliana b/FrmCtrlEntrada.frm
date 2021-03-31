@@ -3,6 +3,10 @@ Private Sub UserForm_Activate()
   Call listar(Me.lst_entrada, "ENTRADA", 10)
 End Sub
 
+Private Sub lst_entrada_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
+  Call excluir_linha(Me.lst_entrada, "ENTRADA", indices)
+End Sub
+
 Private Sub btn_adicionar_Click()
 
   If Not eh_valido(Me.txt_cliente) Then Call msg_de_nao_preenchido("CLIENTE"): Exit Sub

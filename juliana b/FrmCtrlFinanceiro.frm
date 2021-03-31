@@ -60,6 +60,7 @@ Private Sub UserForm_Terminate()
     planilha.Save
     planilha.Close
   End If
+  ThisWorkbook.Save
 End Sub
 
 Private Sub btn_total_Click()

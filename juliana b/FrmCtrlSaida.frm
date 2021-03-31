@@ -3,6 +3,10 @@ Private Sub UserForm_Activate()
   Call listar(Me.lst_saida, "SAÍDA", 6, "F")
 End Sub
 
+Private Sub lst_saida_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
+  Call excluir_linha(Me.lst_saida, "SAÍDA", indices)
+End Sub
+
 Private Sub btn_adicionar_Click()
   If Not eh_valido(Me.txt_despesa) Then Call msg_de_nao_preenchido("DESPESA", "A"): Exit Sub
   If Not eh_valido(Me.txt_valor) Then Call msg_de_nao_preenchido("VALOR"): Exit Sub

@@ -4,6 +4,16 @@ Public Sub msg_de_nao_preenchido(nome As String, Optional oa As String = "O")
   Call MsgBox("POR FAVOR, INFORME " & oa & " " & nome & "!", vbExclamation, nome & " NÃO INFORMADO")
 End Sub
 
+Public Function linha_eh_igual(ByVal itens As Integer, da_lista As MSForms.ListBox, da_tabela As Range, plan As Worksheet) As Boolean
+  Dim i As Integer
+  linha_eh_igual = True
+  For i = 0 To itens - 1
+    If da_lista.List(da_lista.ListIndex, i) <> plan.Cells(da_tabela.Row, i + 1) Then
+      linha_eh_igual = False
+    End If
+  Next
+End Function
+
 Public Function eh_valido(campo As Object) As Boolean
   eh_valido = True:
   If campo.Value = "" Or campo.Value = False Or campo.Value = 0 Then campo.SetFocus: eh_valido = False
@@ -14,7 +24,51 @@ Public Function ultima_linha(nome_aba As String, Optional coluna As String = "A"
   ultima_linha = plan.Sheets(nome_aba).Range(coluna & "1048576").End(xlUp).Row + 1
 End Function
 
-Public Sub listar(tela As MSForms.ListBox, nome_aba As String, numero_de_colunas As Integer, Optional col_fim As String = "J")
+Public Sub excluir_linha(lista As MSForms.ListBox, nome_aba As String, indices As Variant)
+  Dim excluir As String: excluir = lista.List(lista.ListIndex, indices(0))
+  Dim valor As Double: valor = lista.List(lista.ListIndex, indices(1))
+
+  If vbYes = MsgBox("DESEJA APAGAR?" & vbNewLine & excluir, vbYesNo + vbExclamation, "REMOVER SAÍDA") Then
+    With planilha.Sheets(nome_aba)
+
+      Dim cell_encontrada As Range: Set cell_encontrada = .Range(indices(2) & "1")
+      Do While True
+
+        Set cell_encontrada = .Range(indices(2) & ":" & indices(2)) _
+            .Find(excluir, .Cells(cell_encontrada.Row, cell_encontrada.Column))
+
+        If linha_eh_igual(indices(3), lista, cell_encontrada, planilha.Sheets(nome_aba)) Then
+
+          Call MsgBox("ITEM APAGADO!" & vbNewLine & excluir & vbNewLine & _
+          "VALOR: " & .Cells(cell_encontrada.Row, indices(3)), vbInformation, "SUCESSO")
+
+          cell_encontrada.EntireRow.Delete
+          Exit Do
+        End If
+      Loop
+    End With
+
+    Call exclui_extrato_encontrado(excluir, indices(4), valor, indices(5))
+    Call listar(lista, nome_aba, indices(3), indices(6))
+  End If
+End Sub
+
+Public Sub exclui_extrato_encontrado(excluir As String, ByVal col_excluir As String, valor_help As Double, ByVal col_valor As String)
+  With planilha.Sheets("EXTRATO")
+
+    Dim cell_extrato As Range: Set cell_extrato = Range(col_excluir & "1")
+    Dim cell_valor As Range: Set cell_valor = Range(col_valor & "1")
+
+    Do While True
+      Set cell_extrato = .Range(col_excluir & ":" & col_excluir).Find(excluir, .Cells(cell_extrato.Row, cell_extrato.Column))
+      Set cell_valor = .Range(col_valor & ":" & col_valor).Find(valor_help, .Cells(cell_valor.Row, cell_valor.Column))
+
+      If cell_extrato.Row = cell_valor.Row Then cell_extrato.EntireRow.Delete: Exit Do
+    Loop
+  End With
+End Sub
+
+Public Sub listar(tela As MSForms.ListBox, nome_aba As String, ByVal numero_de_colunas As Integer, Optional ByVal col_fim As String = "J")
   planilha.Activate
   With tela
     .ColumnCount = numero_de_colunas
