@@ -34,7 +34,7 @@ def extract_infos(search_terms):
   infos = []
   for term in search_terms:
     n_page = 1    
-    while has_next_button(request_get(term, n_page)):
+    while True:
       print(f'{term} / pagina {n_page}')
 
       response = request_get(term, n_page)
@@ -64,6 +64,8 @@ def extract_infos(search_terms):
         
         infos.append(olx_info)
       n_page += 1
+      if not has_next_button(request_get(term, n_page)):
+        break
   return infos
 
 scraped_data = extract_infos(search_terms)
