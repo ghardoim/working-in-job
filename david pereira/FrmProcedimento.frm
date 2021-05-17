@@ -16,7 +16,7 @@ Private Sub btn_addProduto_Click()
     End With
   End With
   Call atualizar(Me.lst_procedimento, "Procedimentos")
-  
+
   Me.cmb_produtos.value = ""
   Me.txt_qnt.value = 1
 End Sub

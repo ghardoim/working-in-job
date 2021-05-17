@@ -44,6 +44,6 @@ End Sub
 Private Sub UserForm_Activate()
     Me.cmb_tipoPagamento.RowSource = "Taxas!C2:C" & GetLastRow("Taxas", "C") - 1
     Me.cmb_nParcelas.RowSource = "Taxas!A2:A" & GetLastRow("Taxas") - 1
-    
+
     Call atualizar(Me.lst_procedimento, "Procedimentos")
 End Sub
