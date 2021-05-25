@@ -14,7 +14,6 @@ from tkinter.font import Font as newFNT
 from datetime import datetime as dt
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.keys import Keys
 
 whats_url = "https://web.whatsapp.com"
 footer = '//*[@id="main"]/footer/div[1]/div[1]/div[2]/div/'
