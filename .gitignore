@@ -1,8 +1,7 @@
-*.xlsx
-*.xlsm
-*.frx
-*.ico
-*.txt
-*.png
-*/__pycache__
-*.vscode
+*.*
+!*.ipynb
+!*.frm
+!*.bas
+!*.md
+!*.sh
+!*.py
