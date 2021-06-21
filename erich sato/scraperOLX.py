@@ -33,7 +33,7 @@ def format_price(price):
 def extract_infos(search_terms):
   infos = []
   for term in search_terms:
-    n_page = 1    
+    n_page = 1
     while True:
       print(f'{term} / pagina {n_page}')
 
@@ -61,11 +61,13 @@ def extract_infos(search_terms):
 
         price = item.find(name = "p", class_ = "sc-ifAKCX eoKYee")
         olx_info["price"] = format_price(price) if price is not None else 0
-        
+
         infos.append(olx_info)
+
       n_page += 1
       if not has_next_button(request_get(term, n_page)):
         break
+
   return infos
 
 scraped_data = extract_infos(search_terms)
@@ -76,7 +78,6 @@ old_ids = set([ int(_id) for _id in old_data["id"]])
 ids = [ int(item["id"]) for item in scraped_data ]
 new_ids = [ _id for _id in ids if _id not in old_ids ]
 
-print(new_ids)
 if new_ids:
   scraped_data = [ data for data in scraped_data if int(data["id"]) in new_ids ]
 
@@ -85,10 +86,9 @@ if new_ids:
   
   for new_item in scraped_data:
     msg_text = f"Tem item novo na OLX!\n{new_item['title']}\n{new_item['post_url']}"
-    
+
     message = client.messages.create(
       body = msg_text,
       from_ = 'whatsapp:+',
       to = 'whatsapp:+',
-      media_url = f"{new_item['url_image']}", 
-    )
+      media_url = f"{new_item['url_image']}")

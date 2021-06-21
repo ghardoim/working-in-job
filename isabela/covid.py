@@ -1,10 +1,14 @@
-import requests as rq
+from urllib import request as rq
 import pandas as pd
 
 covid_filename = "owid-covid-data.csv"
 
-rs = rq.get("https://covid.ourworldindata.org/data/owid-covid-data.csv", allow_redirects = True)
-open(covid_filename, "w").write(rs.content.decode())
+rs = rq.urlopen("https://covid.ourworldindata.org/data/owid-covid-data.csv")
+open(covid_filename, "w").write("")
+
+with open(covid_filename, "a") as covidfile:
+  for line in rs:
+    covidfile.write(line.decode())
 
 covid_df = pd.read_csv(covid_filename)
 covid_df = covid_df.fillna(0)
