@@ -56,3 +56,28 @@ Sub analise_absenteismo()
 
   MsgBox "achei " & qnt_janeiro & " linhas com JANEIRO e " & qnt_fevereiro & " linhas com FEVEREIRO"
 End Sub
+
+Sub criar_tabela()
+
+  Dim nome_tabela As String: nome_tabela = "Primeira"
+  Dim nome_campo As String: nome_campo = "Regional"
+  Dim aba_tabela As Worksheet: Set aba_tabela = Sheets(2)
+  Dim aba_base As Worksheet: Set aba_base = Sheets(1)
+  Dim my_table As PivotTable
+
+  'referencia da base de dados tem de ser no modelo row n column m
+  Set my_table = ThisWorkbook.PivotCaches.Create(xlDatabase, aba_base.Name & "!R6C1:R39632C11").CreatePivotTable(aba_tabela.Name & "!R1C1", nome_tabela)
+
+  With my_table
+    With .PivotFields(nome_campo)
+      .Orientation = xlRowField
+      .Position = 1
+    End With
+    With .PivotFields("Unidade")
+      .Orientation = xlRowField
+      .Position = 2
+    End With
+    .CompactLayoutRowHeader = nome_campo
+    .AddDataField .PivotFields("BH acumulado"), "Total", xlSum
+  End With
+End Sub
