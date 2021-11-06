@@ -74,5 +74,5 @@ Sub get_produtos()
         
         .Range("A1").Select
     End With
-    Call MsgBox("agora todos os produtos cadastrados no bling est�o aqui! :D", vbInformation, "Base Atualizada")
+    Call MsgBox("agora todos os produtos cadastrados no bling estão aqui! :D", vbInformation, "Base Atualizada")
 End Sub
