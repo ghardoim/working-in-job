@@ -1,15 +1,17 @@
 Option Explicit
 
 Sub get_produtos()
-    Dim page As Integer: page = 1: Dim ult_linha As Integer: ult_linha = 6
-    Dim response As String: Dim produto As Dictionary: Dim json_obj As Dictionary
-    Dim request As New WinHttp.WinHttpRequest: Dim objeto_retornado As New Dictionary
-    Dim lixo_html As Variant: Dim tags_html() As Variant: tags_html = Array("<strong>", "</strong>", "&#8211;", "&nbsp;", "<p>", "</p>", "<br />", "&lt;3")
-        
     With Sheets("BASE_PRODUTOS")
+        Dim response As String: Dim produto As Dictionary: Dim json_obj As Dictionary
+        Dim request As New WinHttp.WinHttpRequest: Dim objeto_retornado As New Dictionary
+        Dim ult_inclusao As Date: ult_inclusao = CDate(WorksheetFunction.Max(.Range("P:P"))) + 1
+        Dim page As Integer: page = 1: Dim ult_linha As Integer: ult_linha = .Range("A1048576").End(xlUp).Row + 1
+        Dim lixo_html As Variant: Dim tags_html() As Variant: tags_html = Array("<strong>", "</strong>", "&#8211;", "&nbsp;", "<p>", "</p>", "<br />", "&lt;3")
+        
         Do While True
             With request
-                .Open "GET", api_url & "produtos/page=" & page & "/json/?loja=" & id_loja & "&imagem=S&estoque=S&apikey=" & api_key, False
+                .Open "GET", api_url & "produtos/page=" & page & "/json/?loja=" & id_loja & _
+                    "&filters=dataInclusao[" & ult_inclusao & " TO " & Date & "]&imagem=S&estoque=S&apikey=" & api_key, False
                 .Send
             End With
             response = request.ResponseText
@@ -59,6 +61,7 @@ Sub get_produtos()
                 .Cells(ult_linha, 14).Value = produto("grupoProduto")
                 
                 If 0 < produto("imagem").Count Then .Cells(ult_linha, 15).Value = produto("imagem")(1)("link")
+                .Cells(ult_linha, 16).Value = produto("dataInclusao")
                 
                 ult_linha = ult_linha + 1
             Next
