@@ -28,8 +28,17 @@ Sub get_produtos()
                 .Cells(ult_linha, 3).Value = produto("codigoPai")
                 
                 'set_tamanho | loja FELINE
-                If achei("tam", produto("descricao")) And Not achei("estampa", produto("descricao")) And Not achei("tamanho", produto("descricao")) And Not achei("tamiris", produto("descricao")) Then .Cells(ult_linha, 4).Value = Trim(Right(produto("descricao"), Len(produto("descricao")) - InStr(UCase(produto("descricao")), "TAM") - 3))
-                
+                If achei("tam", produto("descricao")) And Not achei("estampa", produto("descricao")) And Not achei("tamanho", produto("descricao")) And Not achei("tamiris", produto("descricao")) And Not achei("tamires", produto("descricao")) Then
+                    .Cells(ult_linha, 4).Value = get_tamanho(produto("descricao"), "TAM", 3)
+                ElseIf achei("size", produto("descricao")) Then
+                    .Cells(ult_linha, 4).Value = get_tamanho(produto("descricao"), "SIZE", 4)
+                ElseIf achei("tamanho", produto("descricao")) Then
+                    .Cells(ult_linha, 4).Value = get_tamanho(produto("descricao"), "TAMANHO", 7)
+                End If
+                If achei("color", .Cells(ult_linha, 4).Value) Or achei("cor", .Cells(ult_linha, 4).Value) Then
+                    .Cells(ult_linha, 4).Value = Left(.Cells(ult_linha, 4).Value, InStr(LCase(.Cells(ult_linha, 4).Value), "co") - 2)
+                End If
+
                 'set_tamanho | loja AVLE
                 If Not IsNumeric(Right(produto("codigo"), 1)) Then .Cells(ult_linha, 4).Value = Right(produto("codigo"), 1)
                 

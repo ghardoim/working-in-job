@@ -18,6 +18,8 @@ Sub get_vendas()
             Set json_obj = JsonConverter.ParseJson(response)
             For Each objeto_retornado In json_obj("retorno")("pedidos")
                 Set venda = objeto_retornado("pedido")
+                
+                If IsEmpty(venda("itens")) Then GoTo proximo
                 For Each item_vendido In venda("itens")
                     
                     .Cells(ult_linha, 1).Value = item_vendido("item")("descricao")
@@ -54,6 +56,7 @@ Sub get_vendas()
 
                     ult_linha = ult_linha + 1
                 Next
+proximo:
             Next
             page = page + 1
         Loop

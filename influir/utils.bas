@@ -28,3 +28,9 @@ End Sub
 Public Function achei(isso As String, naquilo As String) As Boolean
     achei = InStr(LCase(naquilo), isso) <> 0
 End Function
+
+Public Function get_tamanho(descricao As String, str_procura As String, str_len As Integer) As String
+    On Error Resume Next
+    get_tamanho = Trim(Right(descricao, Len(descricao) - InStr(UCase(descricao), str_procura) - str_len))
+    On Error GoTo 0
+End Function
