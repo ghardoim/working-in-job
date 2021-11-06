@@ -2,14 +2,16 @@ Option Explicit
 
 Sub get_vendas()
     Dim item_vendido As Dictionary
-    Dim page As Integer: page = 1: Dim ult_linha As Integer: ult_linha = 6
     Dim response As String: Dim venda As Dictionary: Dim json_obj As Dictionary
     Dim request As New WinHttp.WinHttpRequest: Dim objeto_retornado As New Dictionary
+    Dim ult_inclusao As Date: ult_inclusao = CDate(WorksheetFunction.Max(.Range("K:K"))) + 1
+    Dim page As Integer: page = 1: Dim ult_linha As Integer: ult_linha = .Range("A1048576").End(xlUp).Row + 1
     
     With Sheets("BASE_VENDAS")            
         Do While True
             With request
-                .Open "GET", api_url & "pedidos/page=" & page & "/json/?loja=" & id_loja & "&apikey=" & api_key, False
+                .Open "GET", api_url & "pedidos/page=" & page & "/json/?loja=" & id_loja & _
+                    "&filters=dataEmissao[" & ult_inclusao & " TO " & Date & "]&historico=true&apikey=" & api_key, False
                 .Send
             End With
             response = request.ResponseText
