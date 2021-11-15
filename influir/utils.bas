@@ -23,6 +23,20 @@ Public Sub format_header(nome_planilha As String)
             .VerticalAlignment = xlBottom
         End With
     End With
+    Call handle_description(nome_planilha)
+End Sub
+
+Public Sub handle_description(sheet_name As String)
+    Dim position As Integer: Dim celula As Range: Dim remover As Variant
+    With Sheets(sheet_name)
+        For Each celula In .Range("A6:A" & .Range("A1048576").End(xlUp).Row)
+            For Each remover In Array("cor:", "tam:", "size:", "color:", "tamanho:")
+                position = InStr(LCase(celula.Value), remover)
+                If position <> 0 Then celula.Value = Trim(Left(celula.Value, position - 1))
+            Next
+            If "-" = Right(celula.Value, 1) Then celula.Value = Trim(Left(celula.Value, Len(celula.Value) - 1))
+        Next
+    End With
 End Sub
 
 Public Function achei(isso As String, naquilo As String) As Boolean

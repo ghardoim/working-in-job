@@ -51,6 +51,11 @@ Sub get_produtos()
                 .Cells(ult_linha, 8).Value = Replace(produto("preco"), ".", ",") * produto("estoqueAtual")
                 
                 If IsNull(produto("precoCusto")) Then produto("precoCusto") = 0
+                'preço_custo | loja FELINE
+                .Cells(ult_linha, 9).Value = Replace(produto("precoCusto"), ".", ",") / 2.5
+                .Cells(ult_linha, 10).Value = .Cells(ult_linha, 9).Value * produto("estoqueAtual")
+
+                'preço_custo | loja AVLE
                 .Cells(ult_linha, 9).Value = produto("precoCusto")
                 .Cells(ult_linha, 10).Value = Replace(produto("precoCusto"), ".", ",") * produto("estoqueAtual")
                 
