@@ -31,7 +31,7 @@ Sub get_vendas()
                     .Cells(ult_linha, 1).Value = item_vendido("item")("descricao")
                     .Cells(ult_linha, 2).Value = item_vendido("item")("codigo")
                     .Cells(ult_linha, 3).Value = item_vendido("item")("quantidade")
-                    .Cells(ult_linha, 4).Value = item_vendido("item")("valorunidade") * (1 - (Replace(venda("desconto"), ",", ".") / Replace(venda("totalprodutos"), ",", ".")))
+                    .Cells(ult_linha, 4).Value = Replace(item_vendido("item")("valorunidade"), ".", ",") * (1 - (Replace(venda("desconto"), ",", ".") / Replace(venda("totalprodutos"), ",", ".")))
                     .Cells(ult_linha, 5).Value = item_vendido("item")("precocusto")
                     .Cells(ult_linha, 6).Value = item_vendido("item")("descontoItem")
                     .Cells(ult_linha, 7).Value = Replace(venda("desconto"), ",", ".")
@@ -67,7 +67,7 @@ proximo:
             Next
             page = page + 1
         Loop
-        .Columns("A:AD").ColumnWidth = 25
+        .Columns("A:AF").ColumnWidth = 25
         .Columns("D:J").Style = "Currency"
         Call format_header(.Name)
         
