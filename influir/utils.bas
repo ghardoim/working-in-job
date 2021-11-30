@@ -48,3 +48,12 @@ Public Function get_tamanho(descricao As String, str_procura As String, str_len 
     get_tamanho = Trim(Right(descricao, Len(descricao) - InStr(UCase(descricao), str_procura) - str_len))
     On Error GoTo 0
 End Function
+
+Public Function all_unique(col_letter As String, sheet_name As String) As Variant
+    Dim all_uniques(): all_uniques = Sheets(sheet_name).Range(col_letter & "6:" & col_letter & Sheets(sheet_name).Range("A1048576").End(xlUp).Row).Value
+    Dim dict_uniques As New Scripting.Dictionary, linha As Integer
+    For linha = 1 To UBound(all_uniques)
+        dict_uniques(all_uniques(linha, 1)) = Empty
+    Next
+    all_unique = dict_uniques.Keys
+End Function
