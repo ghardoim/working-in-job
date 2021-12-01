@@ -10,14 +10,7 @@ Public Sub format_header(nome_planilha As String)
         With .Range(Range("A5"), .Range("A5").End(xlToRight))
             .Interior.Pattern = xlSolid
             .Interior.Color = RGB(173, 216, 230)
-            .Borders(xlDiagonalDown).LineStyle = xlNone
-            .Borders(xlDiagonalUp).LineStyle = xlNone
-            .Borders(xlEdgeLeft).LineStyle = xlContinuous
-            .Borders(xlEdgeTop).LineStyle = xlContinuous
-            .Borders(xlEdgeBottom).LineStyle = xlContinuous
-            .Borders(xlEdgeRight).LineStyle = xlContinuous
-            .Borders(xlInsideVertical).LineStyle = xlContinuous
-            .Borders(xlInsideHorizontal).LineStyle = xlContinuous
+            .Borders.LineStyle = xlContinuous
             .Font.Bold = True
             .HorizontalAlignment = xlCenter
             .VerticalAlignment = xlBottom
