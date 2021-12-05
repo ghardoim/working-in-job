@@ -3,9 +3,8 @@ Private Sub Worksheet_Change(ByVal Target As Range)
     am = all_unique("L", "BASE_VENDAS")
     With Sheets("BASE_RESUMO")
         For ano_mes = 0 To UBound(am)
-            'incluir condição do canal de venda
             For canal = 9 To 14
-                .Cells(canal, ano_mes + 2).Value = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("D:D"), Sheets("BASE_VENDAS").Range("L:L"), am(ano_mes), Sheets("BASE_VENDAS").Range("P:P"), Sheets("BASE_RESUMO").Range("A5"))
+                .Cells(canal, ano_mes + 2).Value = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("D:D"), Sheets("BASE_VENDAS").Range("L:L"), am(ano_mes), Sheets("BASE_VENDAS").Range("P:P"), .Range("A5"), Sheets("BASE_VENDAS").Range("R:R"), .Cells(canal, 1))
                 .Cells(canal, UBound(am) + 3).Value = WorksheetFunction.Sum(.Range(.Cells(canal, 2), .Cells(canal, UBound(am) + 2)))
             Next
             .Cells(8, ano_mes + 2).Value = WorksheetFunction.Sum(.Range(.Cells(9, ano_mes + 2), .Cells(14, ano_mes + 2)))

@@ -45,7 +45,8 @@ Sub get_vendas()
                     .Cells(ult_linha, 15).Value = venda("vendedor")
                     .Cells(ult_linha, 16).Value = venda("situacao")
                     .Cells(ult_linha, 17).Value = venda("loja")
-                    '.Cells(ult_linha, 18).Value = "ORIGEM"
+                    .Cells(ult_linha, 18).Value = "Site"
+                    If venda("loja") = "" Then .Cells(ult_linha, 18).Value = "Presencial"
                     .Cells(ult_linha, 19).Value = venda("cliente")("nome")
                     .Cells(ult_linha, 20).Value = venda("cliente")("cnpj")
                     .Cells(ult_linha, 21).Value = venda("cliente")("ie")
