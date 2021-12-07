@@ -4,7 +4,7 @@ Public Const api_url As String = "https://bling.com.br/Api/v2/"
         
 Public Sub format_header(nome_planilha As String)
     With Sheets(nome_planilha)
-        .Range("A5").CurrentRegion.AutoFilter
+        .Rows(5).AutoFilter
         .Range("A5").CurrentRegion.HorizontalAlignment = xlJustify
         .Range("A5").CurrentRegion.RowHeight = 15
         With .Range(Range("A5"), .Range("A5").End(xlToRight))

@@ -40,7 +40,7 @@ Sub get_vendas()
                     ElseIf InStr(item_vendido("item")("descricao"), ":") <> 0 And InStr(item_vendido("item")("descricao"), ";") = 0 Then
                         .Cells(ult_linha, 4).Value = Trim(Right(item_vendido("item")("descricao"), Len(item_vendido("item")("descricao")) - InStr(item_vendido("item")("descricao"), ":")))
                     End If
-                    
+
                     .Cells(ult_linha, 5).Value = Replace(item_vendido("item")("valorunidade"), ".", ",") * (1 - (Replace(venda("desconto"), ",", ".") / Replace(venda("totalprodutos"), ",", ".")))
                     .Cells(ult_linha, 6).Value = item_vendido("item")("precocusto")
                     .Cells(ult_linha, 7).Value = item_vendido("item")("descontoItem")
@@ -51,7 +51,7 @@ Sub get_vendas()
                     .Cells(ult_linha, 12).Value = venda("data")
                     .Cells(ult_linha, 13).Value = "'" & Year(venda("data")) & "." & Format(Month(venda("data")), "00")
                     If Not IsEmpty(venda("parcelas")) Then
-                        .Cells(ult_linha, 14).Value = venda("parcelas")(1)("parcela")("forma_pagamento")("codigoFiscal")
+                        .Cells(ult_linha, 14).Value = venda("parcelas")(1)("parcela")("forma_pagamento")("descricao")
                         .Cells(ult_linha, 15).Value = venda("parcelas").Count
                     End If
                     .Cells(ult_linha, 16).Value = venda("numero")
