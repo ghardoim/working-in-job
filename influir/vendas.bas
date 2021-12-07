@@ -51,7 +51,7 @@ Sub get_vendas()
                     .Cells(ult_linha, 12).Value = venda("data")
                     .Cells(ult_linha, 13).Value = "'" & Year(venda("data")) & "." & Format(Month(venda("data")), "00")
                     If Not IsEmpty(venda("parcelas")) Then
-                        .Cells(ult_linha, 14).Value = venda("parcelas")(1)("parcela")("forma_pagamento")("descricao")
+                        If venda("parcelas")(1)("parcela")("obs") <> "" Then .Cells(ult_linha, 14).Value = Trim(Split(Split(venda("parcelas")(1)("parcela")("obs"), "|")(1), ":")(1))
                         .Cells(ult_linha, 15).Value = venda("parcelas").Count
                     End If
                     .Cells(ult_linha, 16).Value = venda("numero")
