@@ -29,38 +29,55 @@ Sub get_vendas()
                 For Each item_vendido In venda("itens")
                     
                     .Cells(ult_linha, 1).Value = item_vendido("item")("descricao")
-                    .Cells(ult_linha, 2).Value = item_vendido("item")("codigo")
+                    .Cells(ult_linha, 2).Value = Trim(item_vendido("item")("codigo"))
                     .Cells(ult_linha, 3).Value = item_vendido("item")("quantidade")
-                    .Cells(ult_linha, 4).Value = Replace(item_vendido("item")("valorunidade"), ".", ",") * (1 - (Replace(venda("desconto"), ",", ".") / Replace(venda("totalprodutos"), ",", ".")))
-                    .Cells(ult_linha, 5).Value = item_vendido("item")("precocusto")
-                    .Cells(ult_linha, 6).Value = item_vendido("item")("descontoItem")
-                    .Cells(ult_linha, 7).Value = Replace(venda("desconto"), ",", ".")
-                    .Cells(ult_linha, 8).Value = Replace(venda("valorfrete"), ",", ".")
-                    .Cells(ult_linha, 9).Value = Replace(venda("totalprodutos"), ",", ".")
-                    .Cells(ult_linha, 10).Value = Replace(venda("totalvenda"), ",", ".")
-                    .Cells(ult_linha, 11).Value = venda("data")
-                    .Cells(ult_linha, 12).Value = "'" & Year(venda("data")) & "." & Format(Month(venda("data")), "00")
-                    .Cells(ult_linha, 13).Value = venda("numero")
-                    .Cells(ult_linha, 14).Value = venda("numeroPedidoLoja")
-                    .Cells(ult_linha, 15).Value = venda("vendedor")
-                    .Cells(ult_linha, 16).Value = venda("situacao")
-                    .Cells(ult_linha, 17).Value = venda("loja")
-                    .Cells(ult_linha, 18).Value = "Site"
-                    If venda("loja") = "" Then .Cells(ult_linha, 18).Value = "Presencial"
-                    .Cells(ult_linha, 19).Value = venda("cliente")("nome")
-                    .Cells(ult_linha, 20).Value = venda("cliente")("cnpj")
-                    .Cells(ult_linha, 21).Value = venda("cliente")("ie")
-                    .Cells(ult_linha, 22).Value = venda("cliente")("rg")
-                    .Cells(ult_linha, 23).Value = venda("cliente")("endereco")
-                    .Cells(ult_linha, 24).Value = venda("cliente")("numero")
-                    .Cells(ult_linha, 25).Value = venda("cliente")("complemento")
-                    .Cells(ult_linha, 26).Value = venda("cliente")("cidade")
-                    .Cells(ult_linha, 27).Value = venda("cliente")("bairro")
-                    .Cells(ult_linha, 28).Value = venda("cliente")("cep")
-                    .Cells(ult_linha, 29).Value = venda("cliente")("uf")
-                    .Cells(ult_linha, 30).Value = venda("cliente")("email")
-                    .Cells(ult_linha, 31).Value = venda("cliente")("celular")
-                    .Cells(ult_linha, 32).Value = venda("cliente")("fone")
+                    
+                    'tamanho | loja AVLE
+                    If Not IsNumeric(Right(item_vendido("item")("codigo"), 1)) And Right(item_vendido("item")("codigo"), 1) <> "" Then
+                        .Cells(ult_linha, 4).Value = Right(item_vendido("item")("codigo"), 1)
+                    ElseIf InStr(item_vendido("item")("descricao"), " - ") <> 0 And InStr(item_vendido("item")("descricao"), ",") = 0 Then
+                        .Cells(ult_linha, 4).Value = Trim(Right(item_vendido("item")("descricao"), 2))
+                    ElseIf InStr(item_vendido("item")("descricao"), ":") <> 0 And InStr(item_vendido("item")("descricao"), ";") = 0 Then
+                        .Cells(ult_linha, 4).Value = Trim(Right(item_vendido("item")("descricao"), Len(item_vendido("item")("descricao")) - InStr(item_vendido("item")("descricao"), ":")))
+                    End If
+                    
+                    .Cells(ult_linha, 5).Value = Replace(item_vendido("item")("valorunidade"), ".", ",") * (1 - (Replace(venda("desconto"), ",", ".") / Replace(venda("totalprodutos"), ",", ".")))
+                    .Cells(ult_linha, 6).Value = item_vendido("item")("precocusto")
+                    .Cells(ult_linha, 7).Value = item_vendido("item")("descontoItem")
+                    .Cells(ult_linha, 8).Value = Replace(venda("desconto"), ",", ".")
+                    .Cells(ult_linha, 9).Value = Replace(venda("valorfrete"), ",", ".")
+                    .Cells(ult_linha, 10).Value = Replace(venda("totalprodutos"), ",", ".")
+                    .Cells(ult_linha, 11).Value = Replace(venda("totalvenda"), ",", ".")
+                    .Cells(ult_linha, 12).Value = venda("data")
+                    .Cells(ult_linha, 13).Value = "'" & Year(venda("data")) & "." & Format(Month(venda("data")), "00")
+                    If Not IsEmpty(venda("parcelas")) Then
+                        .Cells(ult_linha, 14).Value = venda("parcelas")(1)("parcela")("forma_pagamento")("codigoFiscal")
+                        .Cells(ult_linha, 15).Value = venda("parcelas").Count
+                    End If
+                    .Cells(ult_linha, 16).Value = venda("numero")
+                    .Cells(ult_linha, 17).Value = venda("numeroPedidoLoja")
+                    .Cells(ult_linha, 18).Value = venda("vendedor")
+                    .Cells(ult_linha, 19).Value = venda("situacao")
+                    .Cells(ult_linha, 20).Value = venda("loja")
+                    .Cells(ult_linha, 21).Value = "SITE"
+                    
+                    'origem_venda | loja AVLE
+                    If venda("loja") = "" Then .Cells(ult_linha, 21).Value = "LOJA BH"
+                    
+                    .Cells(ult_linha, 22).Value = venda("cliente")("nome")
+                    .Cells(ult_linha, 23).Value = venda("cliente")("cnpj")
+                    .Cells(ult_linha, 24).Value = venda("cliente")("ie")
+                    .Cells(ult_linha, 25).Value = venda("cliente")("rg")
+                    .Cells(ult_linha, 26).Value = venda("cliente")("endereco")
+                    .Cells(ult_linha, 27).Value = venda("cliente")("numero")
+                    .Cells(ult_linha, 28).Value = venda("cliente")("complemento")
+                    .Cells(ult_linha, 29).Value = venda("cliente")("cidade")
+                    .Cells(ult_linha, 30).Value = venda("cliente")("bairro")
+                    .Cells(ult_linha, 31).Value = venda("cliente")("cep")
+                    .Cells(ult_linha, 32).Value = venda("cliente")("uf")
+                    .Cells(ult_linha, 33).Value = venda("cliente")("email")
+                    .Cells(ult_linha, 34).Value = venda("cliente")("celular")
+                    .Cells(ult_linha, 35).Value = venda("cliente")("fone")
 
                     ult_linha = ult_linha + 1
                 Next
