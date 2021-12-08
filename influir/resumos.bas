@@ -1,56 +1,35 @@
-Private Sub Worksheet_Change(ByVal Target As Range)
-    If Target.Address <> "$A$5" Then Exit Sub
-    am = all_unique("L", "BASE_VENDAS")
-    With Sheets("BASE_RESUMO")
-        For ano_mes = 0 To UBound(am)
-            For canal = 9 To 14
-                .Cells(canal, ano_mes + 2).Value = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("D:D"), Sheets("BASE_VENDAS").Range("L:L"), am(ano_mes), Sheets("BASE_VENDAS").Range("P:P"), .Range("A5"), Sheets("BASE_VENDAS").Range("R:R"), .Cells(canal, 1))
-                .Cells(canal, UBound(am) + 3).Value = WorksheetFunction.Sum(.Range(.Cells(canal, 2), .Cells(canal, UBound(am) + 2)))
-            Next
-            .Cells(8, ano_mes + 2).Value = WorksheetFunction.Sum(.Range(.Cells(9, ano_mes + 2), .Cells(14, ano_mes + 2)))
-            .Cells(8, ano_mes + 3).Value = WorksheetFunction.Sum(.Range(.Cells(8, 2), .Cells(8, UBound(am) + 2)))
-        Next
-    End With
-End Sub
-
 Sub set_resumo()
-    Dim situacao As Variant, situacoes As String: situacoes = ""
-    For Each situacao In all_unique("P", "BASE_VENDAS")
-        situacoes = situacao & "," & situacoes
-    Next
-    With Sheets("BASE_RESUMO").Range("A5").Validation
-        .Delete
-        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:=situacoes
-        .IgnoreBlank = True
-        .InCellDropdown = True
-    End With
-    am = all_unique("L", "BASE_VENDAS")
+    situacoes = all_unique("S", "BASE_VENDAS")
+    canais = all_unique("U", "BASE_VENDAS")
+    am = all_unique("M", "BASE_VENDAS")
+    
     With Sheets("BASE_RESUMO")
+    
+        format_cell(.Cells(5, UBound(am) + 3), False, RGB(170, 210, 230)).Value = "total"
         For ano_mes = 0 To UBound(am)
-            With .Cells(6, ano_mes + 2)
-                .Value = "'" & am(ano_mes)
-                .Interior.Color = RGB(180, 250, 120)
-                .Borders.LineStyle = xlContinuous
-                .Font.Bold = True
-                .HorizontalAlignment = xlCenter
-                .VerticalAlignment = xlBottom
-            End With
-            With .Cells(5, ano_mes + 2)
-                .Value = MonthName(Right(am(ano_mes), 2), True)
-                .Interior.Color = RGB(173, 216, 230)
-                .Borders.LineStyle = xlContinuous
-                .Font.Bold = True
-                .HorizontalAlignment = xlCenter
-                .VerticalAlignment = xlBottom
-            End With
+            
+            format_cell(.Cells(6, ano_mes + 2), False, RGB(180, 250, 120)).Value = "'" & am(ano_mes)
+            format_cell(.Cells(5, ano_mes + 2), False, RGB(170, 210, 230)).Value = MonthName(Right(am(ano_mes), 2), True)
+            
+            Dim linha_inicio_bloco As Integer: linha_inicio_bloco = 9
+            For Each situacao In situacoes
+                format_cell(.Cells(linha_inicio_bloco, 1), False, RGB(210, 210, 230)).Value = "TOTAL"
+                format_cell(.Cells(linha_inicio_bloco - 1, 1), False, RGB(170, 210, 230)).Value = situacao
+                
+                For Each canal_venda In canais
+                    format_cell(.Cells(linha_inicio_bloco + 1, 1), False, RGB(210, 210, 230)).Value = canal_venda
+                    
+                    format_cell(.Cells(linha_inicio_bloco + 1, ano_mes + 2)).Value = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("E:E"), Sheets("BASE_VENDAS").Range("M:M"), am(ano_mes), Sheets("BASE_VENDAS").Range("S:S"), situacao, Sheets("BASE_VENDAS").Range("U:U"), canal_venda)
+                    format_cell(.Cells(linha_inicio_bloco + 1, UBound(am) + 3)).Value = WorksheetFunction.Sum(.Range(.Cells(linha_inicio_bloco + 1, 2), .Cells(linha_inicio_bloco + 1, UBound(am) + 2)))
+                    
+                    linha_inicio_bloco = linha_inicio_bloco + 1
+                Next
+                format_cell(.Cells(linha_inicio_bloco - (UBound(canais) + 1), ano_mes + 2)).Value = WorksheetFunction.Sum(.Range(.Cells(linha_inicio_bloco + 1 - (UBound(canais) + 1), ano_mes + 2), .Cells(linha_inicio_bloco + (UBound(canais) + 1), ano_mes + 2)))
+                format_cell(.Cells(linha_inicio_bloco - (UBound(canais) + 1), UBound(am) + 3)).Value = WorksheetFunction.Sum(.Range(.Cells(linha_inicio_bloco + 1 - (UBound(canais) + 1), ano_mes + 3), .Cells(linha_inicio_bloco + (UBound(canais) + 1), ano_mes + 3)))
+                
+                linha_inicio_bloco = linha_inicio_bloco + 5 - (UBound(canais) + 1)
+            Next
         Next
-        With .Cells(5, ano_mes + 2)
-            .Value = "total"
-            .Interior.Color = RGB(173, 216, 230)
-            .Borders.LineStyle = xlContinuous
-            .Font.Bold = True
-            .HorizontalAlignment = xlCenter
-            .VerticalAlignment = xlBottom
-        End With
     End With
+    Call MsgBox("agora todos os resumos estão aqui! :D", vbInformation, "Resumo Atualizado")
 End Sub
