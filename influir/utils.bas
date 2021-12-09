@@ -51,14 +51,15 @@ Public Function all_unique(col_letter As String, sheet_name As String) As Varian
     all_unique = dict_uniques.Keys
 End Function
 
-Public Function format_cell(celula As Range, Optional moeda As Boolean = True, Optional cor As Long = 0) As Range
+Public Function format_cell(celula As Range, Optional cell_style As String = "Normal", Optional cor As Long = 0) As Range
     With celula
+        .Style = cell_style
         .Borders.LineStyle = xlContinuous
-        .HorizontalAlignment = xlCenter
-        .VerticalAlignment = xlBottom
-        If moeda Then .Style = "Currency"
-        If Not moeda Then .Font.Bold = True
-        If Not moeda Then .Interior.Color = cor
+        .HorizontalAlignment = xlRight
+        If cell_style = "Normal" Then
+            .Font.Bold = True
+            .Interior.Color = cor
+        End If
     End With
     Set format_cell = celula
 End Function
