@@ -68,10 +68,18 @@ Sub get_vendas()
                     .Cells(ult_linha, 21).Value = venda("vendedor")
                     .Cells(ult_linha, 22).Value = venda("situacao")
                     .Cells(ult_linha, 23).Value = venda("loja")
-                    .Cells(ult_linha, 24).Value = "SITE"
-
+                    
                     'origem_venda | loja AVLE
+                    .Cells(ult_linha, 24).Value = "SITE"
                     If venda("loja") = "" Then .Cells(ult_linha, 21).Value = "LOJA BH"
+
+                    'origem_venda | loja FELINE
+                    Select Case venda("loja")
+                        Case "203823195": .Cells(ult_linha, 18).Value = "Transferência De Venda Feline"
+                        Case "203773457": .Cells(ult_linha, 18).Value = "Pedido Atacado"
+                        Case "203461254": .Cells(ult_linha, 18).Value = "Pronta Entrega"
+                        Case "": .Cells(ult_linha, 18).Value = "Pronta Entrega Antiga?"
+                    End Select                    
 
                     .Cells(ult_linha, 25).Value = venda("cliente")("nome")
                     .Cells(ult_linha, 26).Value = venda("cliente")("cnpj")
