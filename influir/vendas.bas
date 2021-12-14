@@ -5,7 +5,7 @@ Sub get_vendas()
         Dim item_vendido As Dictionary: Dim linha as Integer
         Dim response As String: Dim venda As Dictionary: Dim json_obj As Dictionary
         Dim request As New WinHttp.WinHttpRequest: Dim objeto_retornado As New Dictionary
-        Dim ult_inclusao As Date: ult_inclusao = CDate(WorksheetFunction.Max(.Range("K:K")))
+        Dim ult_inclusao As Date: ult_inclusao = CDate(WorksheetFunction.Max(.Range("O:O")) - 1)
         Dim page As Integer: page = 1: Dim ult_linha As Integer: ult_linha = .Range("A1048576").End(xlUp).Row + 1
         
         For linha = ult_linha - 1 To 6 Step -1
