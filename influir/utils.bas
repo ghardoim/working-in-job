@@ -36,6 +36,13 @@ Public Function achei(isso As String, naquilo As String) As Boolean
     achei = InStr(LCase(naquilo), isso) <> 0
 End Function
 
+Function get_color(ByVal descricao As String, label As String, label_len As Integer) As String
+    If InStr(LCase(descricao), label) <> 0 Then
+        descricao = Left(Right(descricao, Len(descricao) - InStr(LCase(descricao), label) - label_len), InStr(descricao, ";"))
+        If InStr(descricao, ";") <> 0 Then get_color = Trim(Left(descricao, InStr(descricao, ";") - 1))
+    End If
+End Function
+
 Public Function get_tamanho(descricao As String, str_procura As String, str_len As Integer) As String
     On Error Resume Next
     get_tamanho = Trim(Right(descricao, Len(descricao) - InStr(UCase(descricao), str_procura) - str_len))

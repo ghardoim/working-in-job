@@ -1,8 +1,8 @@
 Sub set_resumo()
     Dim linha_inicio As Integer: linha_inicio = 9
-    situacoes = all_unique("V", "BASE_VENDAS")
-    canais = all_unique("X", "BASE_VENDAS")
-    am = all_unique("P", "BASE_VENDAS")
+    situacoes = all_unique("W", "BASE_VENDAS")
+    canais = all_unique("Y", "BASE_VENDAS")
+    am = all_unique("Q", "BASE_VENDAS")
 
     With Sheets("BASE_RESUMO")
 
@@ -12,9 +12,9 @@ Sub set_resumo()
             format_cell(.Cells(6, ano_mes + 2), cor:=RGB(180, 250, 120)).Value = "'" & am(ano_mes)
             format_cell(.Cells(5, ano_mes + 2), cor:=RGB(170, 210, 230)).Value = MonthName(Right(am(ano_mes), 2), True)
 
-            Call total_ano_mes(linha_inicio, "E:E", am, ano_mes, "Total venda Captada Liquida", "*")
-            Call total_ano_mes(linha_inicio + 1, "F:F", am, ano_mes, "Atendido Bruto", "Atendido")
-            Call total_ano_mes(linha_inicio + 2, "E:E", am, ano_mes, "Atendido Líquido", "Atendido")
+            Call total_ano_mes(linha_inicio, "F:F", am, ano_mes, "Total venda Captada Liquida", "*")
+            Call total_ano_mes(linha_inicio + 1, "G:G", am, ano_mes, "Atendido Bruto", "Atendido")
+            Call total_ano_mes(linha_inicio + 2, "F:F", am, ano_mes, "Atendido Líquido", "Atendido")
             format_cell(.Cells(linha_inicio + 3, 1), cor:=RGB(170, 210, 230)).Value = "Atendido % Desconto"
             format_cell(.Cells(linha_inicio + 4, 1), cor:=RGB(170, 210, 230)).Value = "Participação % Atendido"
 
@@ -31,18 +31,18 @@ Sub set_resumo()
             Call soma_por_situacao("Em andamento", linha_inicio_bloco, linha_inicio, canais, am, ano_mes)
             Call soma_por_situacao("Cancelado", linha_inicio_bloco, linha_inicio, canais, am, ano_mes)
 
-            Call soma_por_situacao("Atendido", linha_inicio_bloco, linha_inicio, canais, am, ano_mes, "F:F", " VENDA BRUTA", False)
-            Call soma_por_situacao("Atendido", linha_inicio_bloco, linha_inicio, canais, am, ano_mes, "G:G", " DESCONTO REALIZADO", False)
+            Call soma_por_situacao("Atendido", linha_inicio_bloco, linha_inicio, canais, am, ano_mes, "G:G", " VENDA BRUTA", False)
+            Call soma_por_situacao("Atendido", linha_inicio_bloco, linha_inicio, canais, am, ano_mes, "H:H", " DESCONTO REALIZADO", False)
 
             format_cell(.Cells(linha_inicio_bloco - 1, 1), cor:=RGB(170, 210, 230)).Value = "Atendido % DESCONTO REALIZADO"
             format_cell(.Cells(linha_inicio_bloco, 1), cor:=RGB(210, 210, 230)).Value = "TOTAL % DESCONTO REALIZADO"
-            format_cell(.Cells(linha_inicio_bloco, ano_mes + 2), "Percent").Value = get_soma_se("G:G", am(ano_mes), "Atendido") / get_soma_se("F:F", am(ano_mes), "Atendido")
-            format_cell(.Cells(linha_inicio_bloco, UBound(am) + 3), "Percent").Value = get_soma_se("G:G", am(ano_mes), "Atendido") / get_soma_se("F:F", am(ano_mes), "Atendido")
+            format_cell(.Cells(linha_inicio_bloco, ano_mes + 2), "Percent").Value = get_soma_se("H:H", am(ano_mes), "Atendido") / get_soma_se("G:G", am(ano_mes), "Atendido")
+            format_cell(.Cells(linha_inicio_bloco, UBound(am) + 3), "Percent").Value = get_soma_se("H:H", am(ano_mes), "Atendido") / get_soma_se("G:G", am(ano_mes), "Atendido")
             For Each canal In canais
                 linha_inicio_bloco = linha_inicio_bloco + 1
                 format_cell(.Cells(linha_inicio_bloco, 1), cor:=RGB(210, 210, 230)).Value = canal
-                format_cell(.Cells(linha_inicio_bloco, ano_mes + 2), "Percent").Value = get_soma_se("G:G", am(ano_mes), "Atendido", canal) / get_soma_se("F:F", am(ano_mes), "Atendido", canal)
-                format_cell(.Cells(linha_inicio_bloco, UBound(am) + 3), "Percent").Value = get_soma_se("G:G", situacao:="Atendido", canal:=canal) / get_soma_se("F:F", situacao:="Atendido", canal:=canal)
+                format_cell(.Cells(linha_inicio_bloco, ano_mes + 2), "Percent").Value = get_soma_se("H:H", am(ano_mes), "Atendido", canal) / get_soma_se("G:G", am(ano_mes), "Atendido", canal)
+                format_cell(.Cells(linha_inicio_bloco, UBound(am) + 3), "Percent").Value = get_soma_se("H:H", situacao:="Atendido", canal:=canal) / get_soma_se("G:G", situacao:="Atendido", canal:=canal)
             Next
             On Error GoTo 0
         Next
@@ -51,10 +51,10 @@ Sub set_resumo()
 End Sub
 
 Function get_soma_se(coluna_soma As String, Optional ByVal ano_mes As String = "*", Optional ByVal situacao As String = "*", Optional ByVal canal As String = "*") As Double
-    get_soma_se = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range(coluna_soma), Sheets("BASE_VENDAS").Range("P:P"), ano_mes, Sheets("BASE_VENDAS").Range("V:V"), situacao, Sheets("BASE_VENDAS").Range("X:X"), canal)
+    get_soma_se = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range(coluna_soma), Sheets("BASE_VENDAS").Range("Q:Q"), ano_mes, Sheets("BASE_VENDAS").Range("W:W"), situacao, Sheets("BASE_VENDAS").Range("Y:Y"), canal)
 End Function
 
-Sub soma_por_situacao(situacao As String, ByRef linha_inicio_bloco As Integer, linha_inicio As Integer, canais As Variant, am As Variant, ByVal ano_mes As Integer, Optional coluna_soma As String = "E:E", Optional complemento As String = "", Optional need_percent As Boolean = True)
+Sub soma_por_situacao(situacao As String, ByRef linha_inicio_bloco As Integer, linha_inicio As Integer, canais As Variant, am As Variant, ByVal ano_mes As Integer, Optional coluna_soma As String = "F:F", Optional complemento As String = "", Optional need_percent As Boolean = True)
     Dim linha_percent As Integer: linha_percent = linha_inicio_bloco - 1
 
     Call header_situacao(situacao, linha_inicio_bloco, complemento)
@@ -118,14 +118,14 @@ Sub set_resumo_cliente()
             Dim linha As Integer: linha = 7
             For Each cliente In all_clientes
                 If 7 = linha Then
-                    format_cell(.Cells(linha, 2), cor:=RGB(255, 255, 255)).Value = "'" & WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Y:AL"), 2, 0)
-                    format_cell(.Cells(linha, 3), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Y:AL"), 8, 0)
-                    format_cell(.Cells(linha, 4), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Y:AL"), 11, 0)
-                    format_cell(.Cells(linha, 5), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Y:AL"), 12, 0)
-                    format_cell(.Cells(linha, 6), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Y:AL"), 13, 0)
+                    format_cell(.Cells(linha, 2), cor:=RGB(255, 255, 255)).Value = "'" & WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Z:AM"), 2, 0)
+                    format_cell(.Cells(linha, 3), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Z:AM"), 8, 0)
+                    format_cell(.Cells(linha, 4), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Z:AM"), 11, 0)
+                    format_cell(.Cells(linha, 5), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Z:AM"), 12, 0)
+                    format_cell(.Cells(linha, 6), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Z:AM"), 13, 0)
                 End If
                 format_cell(.Cells(linha, 1), cor:=RGB(255, 255, 255)).Value = cliente
-                format_cell(.Cells(linha, ano_mes + 7), "Currency").Value = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("E:E"), Sheets("BASE_VENDAS").Range("Y:Y"), cliente, Sheets("BASE_VENDAS").Range("P:P"), am(ano_mes))
+                format_cell(.Cells(linha, ano_mes + 7), "Currency").Value = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("F:F"), Sheets("BASE_VENDAS").Range("Y:Y"), cliente, Sheets("BASE_VENDAS").Range("Q:Q"), am(ano_mes))
                 format_cell(.Cells(linha, UBound(am) + 8), "Currency").Value = WorksheetFunction.Sum(.Range(.Cells(linha, 7), .Cells(linha, UBound(am) + 7)))
                 linha = linha + 1
             Next
