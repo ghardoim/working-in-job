@@ -48,7 +48,7 @@ Sub get_vendas()
                     .Cells(ult_linha, 6).Value = Replace(item_vendido("item")("valorunidade"), ".", ",") * (1 - (Replace(Replace(venda("desconto"), "%", ""), ",", ".") / Replace(venda("totalprodutos"), ",", ".")))
 
                     On Error Resume Next
-                    .Cells(ult_linha, 7).Value = WorksheetFunction.VLookup(Trim(item_vendido("item")("codigo")), Sheets("BASE_PRODUTOS").Range("F:H"), 4, 0)
+                    .Cells(ult_linha, 7).Value = WorksheetFunction.VLookup(Trim(item_vendido("item")("codigo")), Sheets("BASE_PRODUTOS").Range("F:H"), 3, 0)
                     If .Cells(ult_linha, 7).Value Then .Cells(ult_linha, 8).Value = .Cells(ult_linha, 7).Value - .Cells(ult_linha, 6).Value
                     .Cells(ult_linha, 9).Value = .Cells(ult_linha, 8).Value / .Cells(ult_linha, 7).Value
                     On Error GoTo 0

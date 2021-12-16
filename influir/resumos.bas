@@ -107,7 +107,8 @@ Sub total_ano_mes(linha_inicio As Integer, coluna_soma As String, am As Variant,
 End Sub
 
 Sub set_resumo_cliente()
-    all_clientes = all_unique("Y", "BASE_VENDAS")
+    call liga_desliga(False)
+    all_clientes = all_unique("Z", "BASE_VENDAS")
     am = all_unique("P", "BASE_VENDAS")
 
     With Sheets("BASE_RESUMO_CLIENTES")
@@ -127,11 +128,12 @@ Sub set_resumo_cliente()
                     format_cell(.Cells(linha, 6), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Z:AM"), 13, 0)
                 End If
                 format_cell(.Cells(linha, 1), cor:=RGB(255, 255, 255)).Value = cliente
-                format_cell(.Cells(linha, ano_mes + 7), "Currency").Value = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("F:F"), Sheets("BASE_VENDAS").Range("Y:Y"), cliente, Sheets("BASE_VENDAS").Range("Q:Q"), am(ano_mes))
+                format_cell(.Cells(linha, ano_mes + 7), "Currency").Value = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("F:F"), Sheets("BASE_VENDAS").Range("Z:Z"), cliente, Sheets("BASE_VENDAS").Range("Q:Q"), am(ano_mes))
                 format_cell(.Cells(linha, UBound(am) + 8), "Currency").Value = WorksheetFunction.Sum(.Range(.Cells(linha, 7), .Cells(linha, UBound(am) + 7)))
                 linha = linha + 1
             Next
         Next
     End With
     Call MsgBox("agora todos os resumos estão aqui! :D", vbInformation, "Resumo Atualizado")
+    call liga_desliga(True)
 End Sub
