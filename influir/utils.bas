@@ -28,6 +28,9 @@ Public Sub handle_description(sheet_name As String)
                 If position <> 0 Then celula.Value = Trim(Left(celula.Value, position - 1))
             Next
             If "-" = Right(celula.Value, 1) Then celula.Value = Trim(Left(celula.Value, Len(celula.Value) - 1))
+
+            'set_cor | loja AVLE
+            If InStr(celula.Value, " - ") = 0 And InStr(celula.Value, "(") = 0 Then .Cells(celula.Row, 4).Value = StrConv(Split(celula.Value, " ")(UBound(Split(celula.Value, " "))), vbProperCase)
         Next
     End With
 End Sub
