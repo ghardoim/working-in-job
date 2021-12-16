@@ -70,3 +70,12 @@ Public Function format_cell(celula As Range, Optional cell_style As String = "No
     End With
     Set format_cell = celula
 End Function
+
+Public Sub liga_desliga(on_off As Boolean)
+  With Application
+    If on_off Then .Calculation = xlCalculationAutomatic
+    If Not on_off Then .Calculation = xlCalculationManual
+    .ScreenUpdating = on_off
+    .DisplayAlerts = on_off
+  End With
+End Sub

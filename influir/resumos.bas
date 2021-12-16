@@ -1,4 +1,5 @@
 Sub set_resumo()
+    Call liga_desliga(False)
     Dim linha_inicio As Integer: linha_inicio = 9
     situacoes = all_unique("W", "BASE_VENDAS")
     canais = all_unique("Y", "BASE_VENDAS")
@@ -48,6 +49,7 @@ Sub set_resumo()
         Next
     End With
     Call MsgBox("agora todos os resumos estão aqui! :D", vbInformation, "Resumo Atualizado")
+    Call liga_desliga(True)
 End Sub
 
 Function get_soma_se(coluna_soma As String, Optional ByVal ano_mes As String = "*", Optional ByVal situacao As String = "*", Optional ByVal canal As String = "*") As Double

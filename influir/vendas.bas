@@ -1,11 +1,12 @@
 Option Explicit
 
 Sub get_vendas()
+    Call liga_desliga(False)
     With Sheets("BASE_VENDAS")
         Dim item_vendido As Dictionary: Dim linha as Integer
         Dim response As String: Dim venda As Dictionary: Dim json_obj As Dictionary
         Dim request As New WinHttp.WinHttpRequest: Dim objeto_retornado As New Dictionary
-        Dim ult_inclusao As Date: ult_inclusao = CDate(WorksheetFunction.Max(.Range("O:O")) - 1)
+        Dim ult_inclusao As Date: ult_inclusao = CDate(WorksheetFunction.Max(.Range("P:P")) - 1)
         Dim page As Integer: page = 1: Dim ult_linha As Integer: ult_linha = .Range("A1048576").End(xlUp).Row + 1
 
         For linha = ult_linha - 1 To 6 Step -1
@@ -47,7 +48,7 @@ Sub get_vendas()
                     .Cells(ult_linha, 6).Value = Replace(item_vendido("item")("valorunidade"), ".", ",") * (1 - (Replace(Replace(venda("desconto"), "%", ""), ",", ".") / Replace(venda("totalprodutos"), ",", ".")))
 
                     On Error Resume Next
-                    .Cells(ult_linha, 7).Value = WorksheetFunction.VLookup(Trim(item_vendido("item")("codigo")), Sheets("BASE_PRODUTOS").Range("E:G"), 3, 0)
+                    .Cells(ult_linha, 7).Value = WorksheetFunction.VLookup(Trim(item_vendido("item")("codigo")), Sheets("BASE_PRODUTOS").Range("F:H"), 4, 0)
                     If .Cells(ult_linha, 7).Value Then .Cells(ult_linha, 8).Value = .Cells(ult_linha, 7).Value - .Cells(ult_linha, 6).Value
                     .Cells(ult_linha, 9).Value = .Cells(ult_linha, 8).Value / .Cells(ult_linha, 7).Value
                     On Error GoTo 0
@@ -117,4 +118,5 @@ proximo:
         .Range("A1").Select
     End With
     Call MsgBox("agora todas as vendas cadastradas no bling estão aqui! :D", vbInformation, "Base Atualizada")
+    Call liga_desliga(True)
 End Sub
