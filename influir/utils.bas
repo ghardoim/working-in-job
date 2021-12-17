@@ -39,11 +39,41 @@ Public Function achei(isso As String, naquilo As String) As Boolean
     achei = InStr(LCase(naquilo), isso) <> 0
 End Function
 
+'get_color | loja TELA STUDIO
+Function get_cor(descricao As String) As String
+    Dim palavras() As String: palavras = Split(descricao, " ")
+    If InStr(descricao, "cor:") <> 0 Then
+        If InStr(descricao, ";t") = 0 Then get_cor = Trim(Right(descricao, Len(descricao) - InStr(descricao, "cor:") - 3))
+        If InStr(descricao, ";t") <> 0 Then get_cor = Trim(Mid(descricao, InStr(descricao, "cor:") + 4, InStr(descricao, ";t") - (InStr(descricao, "cor:") + 4)))
+    ElseIf InStr(descricao, "cores:") <> 0 Then
+        get_cor = Trim(Right(descricao, Len(descricao) - InStr(descricao, "cores:") - 5))
+    ElseIf InStr(descricao, "color:") <> 0 Then
+        get_cor = Trim(Right(descricao, Len(descricao) - InStr(descricao, "color:") - 5))
+    ElseIf Len(palavras(UBound(palavras))) = 1 Then
+        get_cor = palavras(UBound(palavras) - 2) & " " & palavras(UBound(palavras) - 1)
+    End If
+    get_cor = StrConv(get_cor, vbProperCase)
+End Function
+
 Function get_color(ByVal descricao As String, label As String, label_len As Integer) As String
     If InStr(LCase(descricao), label) <> 0 Then
         descricao = Left(Right(descricao, Len(descricao) - InStr(LCase(descricao), label) - label_len), InStr(descricao, ";"))
         If InStr(descricao, ";") <> 0 Then get_color = Trim(Left(descricao, InStr(descricao, ";") - 1))
     End If
+End Function
+
+'get_tamanho | loja TELA STUDIO
+Function get_tamanho(descricao As String) As String
+    Dim palavras() As String: palavras = Split(descricao, " ")
+    If InStr(descricao, "tamanho:") <> 0 Then
+        If InStr(descricao, ";c") <> 0 Then get_tamanho = Trim(Mid(descricao, InStr(descricao, "tamanho:") + 8, InStr(descricao, ";") - (InStr(descricao, "tamanho:") + 8)))
+        If InStr(descricao, ";c") = 0 Then get_tamanho = Trim(Right(descricao, Len(descricao) - (InStr(descricao, "tamanho:") + 7)))
+    ElseIf InStr(descricao, "tamanhos:") Then
+        get_tamanho = Trim(Mid(descricao, InStr(descricao, "tamanhos:") + 9, InStr(descricao, ";") - (InStr(descricao, "tamanhos:") + 9)))
+    ElseIf Len(palavras(UBound(palavras))) = 1 Then
+        get_tamanho = palavras(UBound(palavras))
+    End If
+    get_tamanho = UCase(get_tamanho)
 End Function
 
 Public Function get_tamanho(descricao As String, str_procura As String, str_len As Integer) As String
