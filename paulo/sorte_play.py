@@ -38,7 +38,7 @@ def cria_jogos(email, senha, valor_palpite):
         if row < last_game.get(): continue
         for dezena in range(1, len(jogosdf.columns) - 1):
             n = str(int(jogo[f'Unnamed: {dezena}'])).zfill(2)
-            if int(row):
+            if int(row) and int(n):
                 browser.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.XPATH, f"//div[@digito='{n}']"))))
 
         valor = wait.until(EC.element_to_be_clickable((By.ID, "valor")))
