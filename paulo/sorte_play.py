@@ -3,6 +3,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from tkinter.filedialog import askopenfilename
 from selenium.webdriver.common.by import By
+from tkinter import StringVar as strVAR
 from tkinter import Button as newBTN
 from tkinter import IntVar as intVAR
 from tkinter import Label as newLBL
@@ -13,16 +14,17 @@ from time import sleep
 import pandas as pd
 
 def cria_jogos(email, senha, valor_palpite):
-
     if not valor_palpite: return
-    filename = askopenfilename(title = "ESCOLHA A PLANILHA COM OS JOGOS").lower()
+    if not filename.get(): filename.set(askopenfilename(title = "ESCOLHA A PLANILHA COM OS JOGOS").lower())
 
-    tipo = { "l": "lotinha", "q": "quininha", "s": "seninha", "qb": "quina-brasil"}
-    tipo_jogo = tipo["l"] if tipo["l"] in filename else tipo["q"] if tipo["q"] in filename else tipo["s"]if tipo["s"] in filename else ""
-    tipo_jogo = tipo["qb"] if "quina brasil" in filename else tipo_jogo
+    tipos = { "l": "lotinha", "q": "quininha", "s": "seninha", "qb": "quina-brasil"}
+    for key in tipos:
+        if tipos[key].replace("-", " ") in filename.get():
+            tipo_jogo = tipos[key]
+            break
     if not tipo_jogo: return
-    
-    jogosdf = pd.read_excel(filename).dropna(how = "all").iloc[3:].reset_index().fillna(0)
+
+    jogosdf = pd.read_excel(filename.get()).dropna(how = "all").iloc[3:].reset_index().fillna(0)
     options = webdriver.ChromeOptions()
     options.add_argument('ignore-certificate-errors')
     browser = webdriver.Chrome(options = options)
@@ -42,17 +44,14 @@ def cria_jogos(email, senha, valor_palpite):
         valor = wait.until(EC.element_to_be_clickable((By.ID, "valor")))
         browser.execute_script(f"arguments[0].value = '{valor_palpite}';", valor)
         browser.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.ID, "addPalpite"))))
-        last_game.set(row)
 
-        if last_game % 24 == 0: break
-
-        for numero in browser.find_elements_by_class_name("num active"):
+        last_game.set(last_game.get() + 1)
+        if last_game.get() % 24 == 0: break
+        for numero in browser.find_elements(By.CLASS_NAME, "num active"):
             browser.execute_script("arguments[0].classList.remove('active');", numero)
-        
 
     browser.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.XPATH, "//*[text() = 'Avançar']"))))
     browser.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.XPATH, "//*[text() = 'PAGAR']"))))
-
     user = wait.until(EC.element_to_be_clickable((By.ID, "usuario")))
     browser.execute_script(f"arguments[0].value = '{email}';", user)
     password = wait.until(EC.element_to_be_clickable((By.NAME, "senha")))
@@ -65,7 +64,6 @@ def cria_jogos(email, senha, valor_palpite):
     ActionChains(browser).move_to_element(recaptcha).click().perform()
     browser.switch_to.default_content()
     sleep(2)
-
     browser.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.XPATH, "//*[text() = 'Entrar']"))))
 
 janela = Tk()
@@ -77,12 +75,12 @@ janela.columnconfigure([0], weight = 1)
 janela.minsize(550, 350)
 janela.maxsize(550, 350)
 
+filename = strVAR(janela, "")
 last_game = intVAR(janela, 0)
 
 newLBL(text = "email:", bg = "lightgray").grid(row = 1)
 emailTXT = newINP(janela, width = 30)
 emailTXT.grid(row = 2)
-
 newLBL(text = "senha:", bg = "lightgray").grid(row = 4)
 senhaTXT = newINP(janela, show="*", width = 30)
 senhaTXT.grid(row = 5)
@@ -94,5 +92,4 @@ valorTXT.grid(row = 8)
 newBTN(text = "abrir o navegador e criar os jogos",
         command = lambda: cria_jogos(emailTXT.get(), senhaTXT.get(), valorTXT.get()),
         bg = "lightblue", width = 35, height = 1).grid(row = 10)
-
 janela.mainloop()
