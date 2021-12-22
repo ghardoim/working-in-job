@@ -10,7 +10,7 @@ Sub get_vendas()
         Dim page As Integer: page = 1: Dim ult_linha As Integer: ult_linha = .Range("A1048576").End(xlUp).Row + 1
 
         For linha = ult_linha - 1 To 6 Step -1
-            If ult_inclusao = .Range("K" & linha).Value Then .Range("A" & linha).EntireRow.Delete Else Exit For
+            If ult_inclusao <= .Range("P" & linha).Value Then .Range("A" & linha).EntireRow.Delete Else Exit For
             ult_linha = linha
         Next
         Do While True
