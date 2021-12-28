@@ -99,6 +99,7 @@ Sub get_vendas()
                     .Cells(ult_linha, 37).Value = venda("cliente")("email")
                     .Cells(ult_linha, 38).Value = venda("cliente")("celular")
                     .Cells(ult_linha, 39).Value = venda("cliente")("fone")
+                    If Not IsEmpty(venda("nota")) Then .Cells(ult_linha, 40).Value = "'" & venda("nota")("numero")
 
                     ult_linha = ult_linha + 1
                 Next
