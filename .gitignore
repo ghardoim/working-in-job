@@ -6,3 +6,4 @@
 !*.md
 !*.sh
 !*.py
+*credenciais.py
