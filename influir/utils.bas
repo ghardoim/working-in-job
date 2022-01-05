@@ -112,3 +112,19 @@ Public Sub liga_desliga(on_off As Boolean)
     .DisplayAlerts = on_off
   End With
 End Sub
+
+'loja NERIAJE
+Sub atualizar()
+    Call liga_desliga(False)
+    Dim base_neriage As Workbook: Set base_neriage = Workbooks.Open(Replace(ThisWorkbook.FullName, ".xlsm", ".xlsx"))
+    Call from_base(base_neriage, "PRODUTOS")
+    Call from_base(base_neriage, "VENDAS")
+    base_neriage.Close
+    Call liga_desliga(True)
+End Sub
+
+Private Sub from_base(base_neriage As Workbook, sufix As String)
+    base_neriage.Sheets("BASE_" & sufix).Range("A1").CurrentRegion.Copy
+    ThisWorkbook.Sheets("BASE_" & sufix).Range("A6").PasteSpecial Paste:=xlPasteValues
+    Application.CutCopyMode = False
+End Sub

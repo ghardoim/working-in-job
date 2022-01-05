@@ -1,12 +1,19 @@
+from numpy import add
 from pandas import ExcelWriter
 from credenciais import *
 from json import dumps
 import requests as rq
 import pandas as pd
 
-def handle_dict_of_dict(df, field_name, fields_list):    
+def get_address_details(detalhe, address_field):
+    try:
+        return detalhe[address_field]
+    except KeyError:
+        pass
+
+def handle_dict_of_dict(df, field_name, fields_list):
     for field in fields_list:
-        df[field] = df["det"].apply(lambda det: det[field_name][field])
+        df[field] = df["det"].apply(lambda detalhe: detalhe[field_name][field])
     return df
 
 def expand_dicts(df):
@@ -36,18 +43,14 @@ def neriage_api(api_call, endpoint, resp_field, df = pd.DataFrame(), i = 0):
         })
         header = { "Content-type": "application/json" }
         resp = rq.post(f"https://app.omie.com.br/api/v1/{endpoint}", headers = header, data = body)
-        # if 200 != resp.status_code: break
+        if 200 != resp.status_code: break
 
         df = df.append(pd.DataFrame(resp.json()[resp_field]), ignore_index = True)
         i += 1
-        break
     return df
 
 file_name = "_bases_/NERIAGE_VENDA_E_ESTOQUE"
 with ExcelWriter(f"{file_name}.xlsx", "xlsxwriter", date_format = "DD/MM/YYYY") as writer:
-    writer.book.filename = f'{file_name}.xlsm'
-    writer.book.add_vba_project('vbaProject.bin')
-
     df = neriage_api('ListarProdutos', 'geral/produtos/', 'produto_servico_cadastro')
     keep_columns(df, ["codigo", "codigo_familia", "codigo_produto", "descr_detalhada", "descricao",
                         "descricao_familia", "modelo", "quantidade_estoque", "valor_unitario"]
@@ -60,4 +63,8 @@ with ExcelWriter(f"{file_name}.xlsx", "xlsxwriter", date_format = "DD/MM/YYYY") 
     df = handle_dict_of_dict(df, "produto", ["codigo", "codigo_produto", "descricao", "percentual_desconto", "quantidade",
                                     "tipo_desconto", "valor_desconto", "valor_mercadoria", "valor_total", "valor_unitario"])
     del df["det"]
+    for address_field in ["cBairroOd", "cCidadeOd", "cEnderecoOd", "cEstadoOd"]:
+        df[address_field] = df["outros_detalhes"].apply(lambda detalhe: get_address_details(detalhe, address_field))
+    del df["outros_detalhes"]
+
     df.to_excel(writer, "BASE_VENDAS", index = False)
