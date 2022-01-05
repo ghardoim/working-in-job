@@ -1,4 +1,3 @@
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from tkinter.filedialog import askopenfilename
@@ -10,10 +9,9 @@ from tkinter import Label as newLBL
 from tkinter import Entry as newINP
 from selenium import webdriver
 from tkinter import Tk
-from time import sleep
 import pandas as pd
 
-def cria_jogos(email, senha, valor_palpite):
+def cria_jogos(valor_palpite):
     if not valor_palpite: return
     if not filename.get(): filename.set(askopenfilename(title = "ESCOLHA A PLANILHA COM OS JOGOS").lower())
 
@@ -36,6 +34,8 @@ def cria_jogos(email, senha, valor_palpite):
 
     for row, jogo in jogosdf.iterrows():
         if row < last_game.get(): continue
+        print(last_game.get())
+
         for dezena in range(1, len(jogosdf.columns) - 1):
             n = str(int(jogo[f'Unnamed: {dezena}'])).zfill(2)
             if int(row) and int(n):
@@ -52,44 +52,23 @@ def cria_jogos(email, senha, valor_palpite):
 
     browser.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.XPATH, "//*[text() = 'Avançar']"))))
     browser.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.XPATH, "//*[text() = 'PAGAR']"))))
-    user = wait.until(EC.element_to_be_clickable((By.ID, "usuario")))
-    browser.execute_script(f"arguments[0].value = '{email}';", user)
-    password = wait.until(EC.element_to_be_clickable((By.NAME, "senha")))
-    browser.execute_script(f"arguments[0].value = '{senha}';", password)
-
-    sleep(2)
-    browser.switch_to.frame(browser.find_element_by_xpath("//iframe[@title='reCAPTCHA']"))
-    recaptcha = browser.find_element_by_class_name("recaptcha-checkbox-borderAnimation")
-    browser.execute_script("arguments[0].scrollIntoView(true);", recaptcha)
-    ActionChains(browser).move_to_element(recaptcha).click().perform()
-    browser.switch_to.default_content()
-    sleep(2)
-    browser.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.XPATH, "//*[text() = 'Entrar']"))))
 
 janela = Tk()
 
 janela.title("Desk.Robot")
 janela.config(bg = "lightgray")
-janela.rowconfigure([0, 3, 6, 9, 10, 11], weight = 1)
+janela.rowconfigure([0, 3], weight = 1)
 janela.columnconfigure([0], weight = 1)
-janela.minsize(550, 350)
-janela.maxsize(550, 350)
+janela.minsize(350, 250)
+janela.maxsize(350, 250)
 
 filename = strVAR(janela, "")
 last_game = intVAR(janela, 0)
 
-newLBL(text = "email:", bg = "lightgray").grid(row = 1)
-emailTXT = newINP(janela, width = 30)
-emailTXT.grid(row = 2)
-newLBL(text = "senha:", bg = "lightgray").grid(row = 4)
-senhaTXT = newINP(janela, show="*", width = 30)
-senhaTXT.grid(row = 5)
-
-newLBL(text = "valor por jogo:", bg = "lightgray").grid(row = 7)
+newLBL(text = "valor por jogo:", bg = "lightgray").grid(row = 1)
 valorTXT = newINP(janela, width = 30)
-valorTXT.grid(row = 8)
+valorTXT.grid(row = 2)
 
-newBTN(text = "abrir o navegador e criar os jogos",
-        command = lambda: cria_jogos(emailTXT.get(), senhaTXT.get(), valorTXT.get()),
-        bg = "lightblue", width = 35, height = 1).grid(row = 10)
+newBTN(text = "abrir o navegador e criar os jogos", command = lambda: cria_jogos(valorTXT.get()),
+        bg = "lightblue", width = 35, height = 1).grid(row = 3)
 janela.mainloop()
