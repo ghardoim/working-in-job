@@ -85,7 +85,7 @@ Sub get_vendas()
                         Case "": .Cells(ult_linha, 25).Value = "Pronta Entrega Antiga?"
                     End Select                    
 
-                    .Cells(ult_linha, 26).Value = venda("cliente")("nome")
+                    .Cells(ult_linha, 26).Value = Trim(StrConv(venda("cliente")("nome"), vbProperCase))
                     .Cells(ult_linha, 27).Value = venda("cliente")("cnpj")
                     .Cells(ult_linha, 28).Value = venda("cliente")("ie")
                     .Cells(ult_linha, 29).Value = venda("cliente")("rg")

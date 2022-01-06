@@ -63,7 +63,7 @@ Sub soma_por_situacao(situacao As String, ByRef linha_inicio_bloco As Integer, l
     Call soma_por_canal(linha_inicio_bloco, canais, am, coluna_soma, ano_mes, situacao)
     Call total(linha_inicio_bloco, am, canais, ano_mes)
     If need_percent Then Call percentual(linha_percent, linha_inicio, am, ano_mes)
-    linha_inicio_bloco = linha_inicio_bloco + 6 - (UBound(canais) + 1)
+    linha_inicio_bloco = linha_inicio_bloco + 8 - (UBound(canais) + 1)
 End Sub
 
 Sub soma_por_canal(ByRef linha_inicio_bloco As Integer, canais As Variant, am As Variant, coluna_soma As String, ByVal ano_mes As Integer, ByVal situacao As String)
@@ -104,36 +104,4 @@ Sub total_ano_mes(linha_inicio As Integer, coluna_soma As String, am As Variant,
         format_cell(.Cells(linha_inicio, ano_mes + 2), "Currency").Value = get_soma_se(coluna_soma, am(ano_mes), situacao)
         format_cell(.Cells(linha_inicio, UBound(am) + 3), "Currency").Value = WorksheetFunction.Sum(.Range(.Cells(linha_inicio, 2), .Cells(linha_inicio, UBound(am) + 2)))
     End With
-End Sub
-
-Sub set_resumo_cliente()
-    call liga_desliga(False)
-    all_clientes = all_unique("Z", "BASE_VENDAS")
-    am = all_unique("P", "BASE_VENDAS")
-
-    With Sheets("BASE_RESUMO_CLIENTES")
-        format_cell(.Cells(5, UBound(am) + 3), cor:=RGB(170, 210, 230)).Value = "total"
-        For ano_mes = 0 To UBound(am)
-
-            format_cell(.Cells(6, ano_mes + 7), cor:=RGB(180, 250, 120)).Value = "'" & am(ano_mes)
-            format_cell(.Cells(5, ano_mes + 7), cor:=RGB(170, 210, 230)).Value = MonthName(Right(am(ano_mes), 2), True)
-
-            Dim linha As Integer: linha = 7
-            For Each cliente In all_clientes
-                If 7 = linha Then
-                    format_cell(.Cells(linha, 2), cor:=RGB(255, 255, 255)).Value = "'" & WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Z:AM"), 2, 0)
-                    format_cell(.Cells(linha, 3), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Z:AM"), 8, 0)
-                    format_cell(.Cells(linha, 4), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Z:AM"), 11, 0)
-                    format_cell(.Cells(linha, 5), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Z:AM"), 12, 0)
-                    format_cell(.Cells(linha, 6), cor:=RGB(255, 255, 255)).Value = WorksheetFunction.VLookup(cliente, Sheets("BASE_VENDAS").Range("Z:AM"), 13, 0)
-                End If
-                format_cell(.Cells(linha, 1), cor:=RGB(255, 255, 255)).Value = cliente
-                format_cell(.Cells(linha, ano_mes + 7), "Currency").Value = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("F:F"), Sheets("BASE_VENDAS").Range("Z:Z"), cliente, Sheets("BASE_VENDAS").Range("Q:Q"), am(ano_mes))
-                format_cell(.Cells(linha, UBound(am) + 8), "Currency").Value = WorksheetFunction.Sum(.Range(.Cells(linha, 7), .Cells(linha, UBound(am) + 7)))
-                linha = linha + 1
-            Next
-        Next
-    End With
-    Call MsgBox("agora todos os resumos estão aqui! :D", vbInformation, "Resumo Atualizado")
-    call liga_desliga(True)
 End Sub
