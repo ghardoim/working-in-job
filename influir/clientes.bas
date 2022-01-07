@@ -1,6 +1,8 @@
 Sub get_clientes()
     Call liga_desliga(False)
     With Sheets("BASE_CLIENTES")
+        .Rows("6:1048576").Delete
+
         Dim response As String: Dim cliente As Dictionary: Dim json_obj As Dictionary
         Dim request As New WinHttp.WinHttpRequest: Dim objeto_retornado As New Dictionary
         Dim ult_inclusao As Date: ult_inclusao = CDate(WorksheetFunction.Max(.Range("J:J"))) + 1
@@ -32,13 +34,20 @@ Sub get_clientes()
                 .Cells(ult_linha, 8).Value = IIf(IsEmpty(cliente("celular")), cliente("fone"), cliente("celular"))
                 .Cells(ult_linha, 9).Value = cliente("email")
                 .Cells(ult_linha, 10).Value = cliente("clienteDesde")
+
+                ultima_compra = WorksheetFunction.MaxIfs(Sheets("BASE_VENDAS").Range("P:P"), Sheets("BASE_VENDAS").Range("Z:Z"), nome)
+                valor_total = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("F:F"), Sheets("BASE_VENDAS").Range("Z:Z"), nome)
+                .Cells(ult_linha, 11).Value = IIf(ultima_compra <> 0, ultima_compra, "")
+                .Cells(ult_linha, 12).Value = IIf(ultima_compra <> 0, Date - ultima_compra, "")
+                .Cells(ult_linha, 13).Value = valor_total
+
                 For am = 0 To UBound(anos_meses)
-                    .Cells(5, am + 11).Value = "'" & anos_meses(am)
-                    .Cells(ult_linha, am + 11).Value = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("F:F"), Sheets("BASE_VENDAS").Range("Q:Q"), anos_meses(am), Sheets("BASE_VENDAS").Range("Z:Z"), nome)
+                    .Cells(5, am + 14).Value = "'" & anos_meses(am)
+                    .Cells(ult_linha, am + 14).Value = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("F:F"), Sheets("BASE_VENDAS").Range("Q:Q"), anos_meses(am), Sheets("BASE_VENDAS").Range("Z:Z"), nome)
                 Next
-                Set range_anomes = .Range(.Cells(ult_linha, 11), .Cells(ult_linha, UBound(anos_meses) + 11))
+                Set range_anomes = .Range(.Cells(ult_linha, 14), .Cells(ult_linha, UBound(anos_meses) + 14))
                 n_meses_venda = WorksheetFunction.CountIf(range_anomes, ">0")
-                If n_meses_venda <> 0 Then .Cells(ult_linha, UBound(anos_meses) + 12).Value = WorksheetFunction.Sum(range_anomes) / n_meses_venda
+                If n_meses_venda <> 0 Then .Cells(ult_linha, UBound(anos_meses) + 15).Value = WorksheetFunction.Sum(range_anomes) / n_meses_venda
                 ult_linha = ult_linha + 1
             Next
             page = page + 1
