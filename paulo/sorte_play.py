@@ -9,6 +9,7 @@ from tkinter import Label as newLBL
 from tkinter import Entry as newINP
 from selenium import webdriver
 from tkinter import Tk
+from time import sleep
 import pandas as pd
 
 def cria_jogos(valor_palpite):
@@ -34,13 +35,14 @@ def cria_jogos(valor_palpite):
 
     for row, jogo in jogosdf.iterrows():
         if row < last_game.get(): continue
-        print(last_game.get())
 
         for dezena in range(1, len(jogosdf.columns) - 1):
             n = str(int(jogo[f'Unnamed: {dezena}'])).zfill(2)
             if int(row) and int(n):
+                sleep(1)
                 browser.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.XPATH, f"//div[@digito='{n}']"))))
 
+        sleep(2)
         valor = wait.until(EC.element_to_be_clickable((By.ID, "valor")))
         browser.execute_script(f"arguments[0].value = '{valor_palpite}';", valor)
         browser.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.ID, "addPalpite"))))
@@ -48,8 +50,9 @@ def cria_jogos(valor_palpite):
         last_game.set(last_game.get() + 1)
         if last_game.get() % 24 == 0: break
         for numero in browser.find_elements(By.CLASS_NAME, "num active"):
+            sleep(2)
             browser.execute_script("arguments[0].classList.remove('active');", numero)
-
+    sleep(2)
     browser.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.XPATH, "//*[text() = 'Avançar']"))))
     browser.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.XPATH, "//*[text() = 'PAGAR']"))))
 
