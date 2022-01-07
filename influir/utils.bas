@@ -27,6 +27,7 @@ Public Sub handle_description(sheet_name As String)
                 position = InStr(LCase(celula.Value), remover)
                 If position <> 0 Then celula.Value = Trim(Left(celula.Value, position - 1))
             Next
+            .Cells(celula.Row, 41).Value = Trim(.Cells(celula.Row, 1).Value & " " & .Cells(celula.Row, 4).Value)
             If "-" = Right(celula.Value, 1) Then celula.Value = Trim(Left(celula.Value, Len(celula.Value) - 1))
 
             'set_cor | loja AVLE
