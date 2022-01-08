@@ -75,7 +75,7 @@ Sub get_vendas()
                     
                     'origem_venda | loja AVLE
                     .Cells(ult_linha, 25).Value = "SITE"
-                    If venda("loja") = "" Then .Cells(ult_linha, 25).Value = "LOJA BH"
+                    If venda("loja") = "" Or venda("vendedor") <> "" Then .Cells(ult_linha, 25).Value = "LOJA BH"
 
                     'origem_venda | loja FELINE
                     Select Case venda("loja")
