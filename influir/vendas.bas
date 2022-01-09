@@ -45,9 +45,15 @@ Sub get_vendas()
                         .Cells(ult_linha, 5).Value = Trim(Right(item_vendido("item")("descricao"), Len(item_vendido("item")("descricao")) - InStr(item_vendido("item")("descricao"), ":")))
                     End If
 
-                    .Cells(ult_linha, 6).Value = Replace(item_vendido("item")("valorunidade"), ".", ",") * (1 - (Replace(Replace(venda("desconto"), "%", ""), ",", ".") / Replace(venda("totalprodutos"), ",", ".")))
-
                     On Error Resume Next
+                    'desconto | loja AVLE
+                    If InStr(venda("desconto"), "%") <> 0 Then
+                        desconto = Round((Replace(venda("desconto"), "%", "") / 100) * Replace(venda("totalprodutos"), ".", ","), 2)
+                    Else
+                        desconto = venda("desconto")
+                    End If
+                    
+                    .Cells(ult_linha, 6).Value = Replace(item_vendido("item")("valorunidade"), ".", ",") * (1 - (Replace(Replace(venda("desconto"), "%", ""), ",", ".") / Replace(venda("totalprodutos"), ",", ".")))
                     .Cells(ult_linha, 7).Value = WorksheetFunction.VLookup(Trim(item_vendido("item")("codigo")), Sheets("BASE_PRODUTOS").Range("F:H"), 3, 0)
                     If .Cells(ult_linha, 7).Value Then .Cells(ult_linha, 8).Value = .Cells(ult_linha, 7).Value - .Cells(ult_linha, 6).Value
                     .Cells(ult_linha, 9).Value = .Cells(ult_linha, 8).Value / .Cells(ult_linha, 7).Value
