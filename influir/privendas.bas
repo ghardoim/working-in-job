@@ -1,6 +1,7 @@
 Sub set_privenda()
     Call liga_desliga(False)
-    With Sheets("BASE_PRIVENDA")    
+    With Sheets("BASE_PRIVENDA")
+        .Rows("6:1048576").Delete
         Dim ult_linha As Integer: ult_linha = .Range("A1048576").End(xlUp).Row + 1
         produtos_cor = all_unique("AO", "BASE_VENDAS")
         For Each produto In produtos_cor

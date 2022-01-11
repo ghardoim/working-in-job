@@ -9,7 +9,9 @@ Sub get_clientes()
         Dim page As Integer: page = 1: Dim ult_linha As Integer: ult_linha = .Range("A1048576").End(xlUp).Row + 1
 
         anos_meses = all_unique("Q", "BASE_VENDAS")
-        .Cells(5, UBound(anos_meses) + 12).Value = "Ticket Médio"
+        .Cells(5, UBound(anos_meses) + 15).Value = "Ticket Médio"
+        .Cells(5, UBound(anos_meses) + 16).Value = "Classificação"
+
         Do While True
             With request
                 .Open "GET", api_url & "contatos/page=" & page & "/json/?filters=" & _
@@ -47,14 +49,24 @@ Sub get_clientes()
                 Next
                 Set range_anomes = .Range(.Cells(ult_linha, 14), .Cells(ult_linha, UBound(anos_meses) + 14))
                 n_meses_venda = WorksheetFunction.CountIf(range_anomes, ">0")
-                If n_meses_venda <> 0 Then .Cells(ult_linha, UBound(anos_meses) + 15).Value = WorksheetFunction.Sum(range_anomes) / n_meses_venda
+                If n_meses_venda <> 0 Then ticket_medio = WorksheetFunction.Sum(range_anomes) / n_meses_venda
+
+                .Cells(ult_linha, UBound(anos_meses) + 15).Value = ticket_medio
+                If ticket_medio > .Range("B3").Value Then .Cells(ult_linha, UBound(anos_meses) + 16).Value = "VIP"
+                If ticket_medio > .Range("C3").Value Then .Cells(ult_linha, UBound(anos_meses) + 16).Value = "Potencial"
+                If WorksheetFunction.CountIf(.Range(.Cells(ult_linha, 13), .Cells(ult_linha, UBound(anos_meses) + 15)), "<>0") _
+                    >= 6 Then .Cells(ult_linha, UBound(anos_meses) + 16).Value = "Recorrente"
                 ult_linha = ult_linha + 1
             Next
             page = page + 1
         Loop
-
+        .Range("M:" & Split(Cells(1, UBound(anos_meses) + 15).Address(True, False), "$")(0)).Style = "Currency"
         .Range("A1").Select
     End With
     Call MsgBox("agora todos os clientes cadastrados no bling estão aqui! :D", vbInformation, "Base Atualizada")
     Call liga_desliga(True)
+End Sub
+
+Private Sub Worksheet_Change(ByVal Target As Range)
+    If Target.Address = Range("B3").Address Or Target.Address = Range("C3").Address Then Call get_clientes
 End Sub
