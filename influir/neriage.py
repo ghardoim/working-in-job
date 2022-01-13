@@ -52,9 +52,10 @@ def neriage_api(api_call, endpoint, resp_field, df = pd.DataFrame(), i = 0):
 file_name = "_bases_/NERIAGE_VENDA_E_ESTOQUE"
 with ExcelWriter(f"{file_name}.xlsx", "xlsxwriter", date_format = "DD/MM/YYYY") as writer:
     df = neriage_api('ListarProdutos', 'geral/produtos/', 'produto_servico_cadastro')
-    keep_columns(df, ["codigo", "codigo_familia", "codigo_produto", "descr_detalhada", "descricao",
-                        "descricao_familia", "modelo", "quantidade_estoque", "valor_unitario"]
-    ).to_excel(writer, "BASE_PRODUTOS", index = False)
+    df = keep_columns(df, ["codigo", "codigo_familia", "codigo_produto", "descr_detalhada", "descricao",
+                        "descricao_familia", "modelo", "quantidade_estoque", "valor_unitario"])
+    df["acervo/piloto"] = df["descricao"].apply(lambda desc: "piloto" if "piloto" in desc.lower() else "acervo" if "acervo" in desc.lower() else "")
+    df.to_excel(writer, "BASE_PRODUTOS", index = False)
 
     df = neriage_api('ListarPedidos', 'produtos/pedido/', 'pedido_venda_produto')
     df = expand_dicts(keep_columns(df, ["cabecalho", "det", "informacoes_adicionais"]).explode("det"))
@@ -66,5 +67,4 @@ with ExcelWriter(f"{file_name}.xlsx", "xlsxwriter", date_format = "DD/MM/YYYY") 
     for address_field in ["cBairroOd", "cCidadeOd", "cEnderecoOd", "cEstadoOd"]:
         df[address_field] = df["outros_detalhes"].apply(lambda detalhe: get_address_details(detalhe, address_field))
     del df["outros_detalhes"]
-
-    df.to_excel(writer, "BASE_VENDAS", index = False)
+    df.drop_duplicates().to_excel(writer, "BASE_VENDAS", index = False)
