@@ -26,6 +26,7 @@ def cria_jogos(valor_palpite):
     jogosdf = pd.read_excel(filename.get()).dropna(how = "all").iloc[3:].reset_index().fillna(0)
     options = webdriver.ChromeOptions()
     options.add_argument('ignore-certificate-errors')
+    options.add_experimental_option("detach", True)
     browser = webdriver.Chrome(options = options)
     browser.maximize_window()
 
