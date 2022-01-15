@@ -9,17 +9,14 @@ Sub get_produtos()
         For linha = 6 To ultima_linha + 3
             On Error Resume Next
             .Cells(linha, 13).Value = Trim("'" & Split(.Cells(linha, 1), "-")(0))
-            For Each tamanho In Array("PP", "P", "M", "G", "GG", "U", "ÚNICO", "34", "35", "36", "37", "38", "39", "40", "42", "44", "46")
+            For Each tamanho In tamanhos
                 descricao = Split(.Cells(linha, 2), " ")
                 If descricao(UBound(descricao)) = tamanho Then .Cells(linha, 16).Value = tamanho
             Next
             On Error GoTo 0
             Call set_atributo("ACERVO", linha, 14, "BASE_PRODUTOS")
             Call set_atributo("PILOTO", linha, 14, "BASE_PRODUTOS")
-            For Each cor In Array("AMARELO", "BEGE", "PRETO", "OFF", "OFF WHITE", "OFFWHITE", "OFF WHITHE", "BRANCO", "VERMELHO", "ROSÊ", _
-                                    "ROSE", "ROSA", "AZUL", "MARINHO", "AZUL MARINHO", "CINZA", "VERDE", "MARFIM", "LISTRADO", "DIJON", _
-                                    "CORAL", "CARAMELO", "ESTAMPA CLARA", "ESTAMPA ESCURA", "DOURADO", "TOMATE", "ROXO", "AREIA", "MARROM", _
-                                    "COBRE", "XADREZ", "LARANJA", "SALMÃO", "RISCA DE GIZ", "BRUMA", "NATURAL", "VERMELHA")
+            For Each cor In cores
                 Call set_atributo(cor, linha, 15, "BASE_PRODUTOS")
             Next
             Call set_atributo("ÚNICO", linha, 16, "BASE_PRODUTOS")
