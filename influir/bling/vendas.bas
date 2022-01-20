@@ -89,7 +89,17 @@ Sub get_vendas()
                         Case "203773457": .Cells(ult_linha, 25).Value = "Pedido Atacado"
                         Case "203461254": .Cells(ult_linha, 25).Value = "Pronta Entrega"
                         Case "": .Cells(ult_linha, 25).Value = "Pronta Entrega Antiga?"
-                    End Select                    
+                    End Select
+
+                    'origem_venda | loja TELA STUDIO
+                    Select Case venda("loja")
+                        Case "203900745": .Cells(ult_linha, 25).Value = "Revendedores"
+                        Case "203900744": .Cells(ult_linha, 25).Value = "Instagram"
+                        Case "203900743": .Cells(ult_linha, 25).Value = "Malinha/Produção"
+                        Case "203900740": .Cells(ult_linha, 25).Value = "PINGA"
+                        Case "203900737": .Cells(ult_linha, 25).Value = "Ateliê"
+                        Case "203881956": .Cells(ult_linha, 25).Value = "Shopify Tela Studio SP"
+                    End Select             
 
                     .Cells(ult_linha, 26).Value = Trim(StrConv(venda("cliente")("nome"), vbProperCase))
                     .Cells(ult_linha, 27).Value = venda("cliente")("cnpj")
