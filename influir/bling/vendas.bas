@@ -52,7 +52,7 @@ Sub get_vendas()
                     Else
                         desconto = venda("desconto")
                     End If
-                    
+
                     .Cells(ult_linha, 6).Value = Replace(item_vendido("item")("valorunidade"), ".", ",") * (1 - (Replace(Replace(venda("desconto"), "%", ""), ",", ".") / Replace(venda("totalprodutos"), ",", ".")))
                     .Cells(ult_linha, 7).Value = WorksheetFunction.VLookup(Trim(item_vendido("item")("codigo")), Sheets("BASE_PRODUTOS").Range("F:H"), 3, 0)
                     If .Cells(ult_linha, 7).Value Then .Cells(ult_linha, 8).Value = .Cells(ult_linha, 7).Value - .Cells(ult_linha, 6).Value
@@ -99,7 +99,7 @@ Sub get_vendas()
                         Case "203900740": .Cells(ult_linha, 25).Value = "PINGA"
                         Case "203900737": .Cells(ult_linha, 25).Value = "Ateliê"
                         Case "203881956": .Cells(ult_linha, 25).Value = "Shopify Tela Studio SP"
-                    End Select             
+                    End Select
 
                     .Cells(ult_linha, 26).Value = Trim(StrConv(venda("cliente")("nome"), vbProperCase))
                     .Cells(ult_linha, 27).Value = venda("cliente")("cnpj")

@@ -73,7 +73,7 @@ Sub get_produtos()
                     .Cells(ult_linha, 17).Value = produto("dataInclusao")
                     .Cells(ult_linha, 18).Value = deposito("deposito")("nome")
                     .Cells(ult_linha, 19).Value = deposito("deposito")("saldo")
-                    
+
                     ult_linha = ult_linha + 1
                 Next
             Next

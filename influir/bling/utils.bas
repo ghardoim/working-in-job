@@ -1,7 +1,7 @@
 Public Const id_loja As String = ""
 Public Const api_key As String = ""
 Public Const api_url As String = "https://bling.com.br/Api/v2/"
-        
+
 Public Sub format_header(nome_planilha As String)
     With Sheets(nome_planilha)
         .Rows(5).AutoFilter
