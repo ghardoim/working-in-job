@@ -75,7 +75,7 @@ Sub atualiza_giro(linha As Integer, ByVal produto_cor As String)
 
         .Cells(linha, coluna + 1).Value = WorksheetFunction.MinIfs(svendas.Range("G:G"), svendas.Range("V:V"), produto_cor)
         .Cells(linha, coluna + 2).Value = WorksheetFunction.MaxIfs(svendas.Range("G:G"), svendas.Range("V:V"), produto_cor)
-        .Cells(linha, coluna).Value = CInt(CDate(data_lancamento) - Date)
+        .Cells(linha, coluna).Value = CInt(Date - CDate(data_lancamento))
 nao_achei:
     If Err.Number = 1004 Then: .Cells(linha, 2).Interior.ColorIndex = 3
     On Error GoTo 0
