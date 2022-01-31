@@ -28,18 +28,24 @@ Sub atualiza_giro(linha As Integer, ByVal produto_cor As String)
     Dim sprodutos As Worksheet: Set sprodutos = ThisWorkbook.Sheets("BASE_PRODUTOS")
 
     With ThisWorkbook.Sheets("BASE_GIRO")
-        .Cells(linha, 2) = produto_cor
+        On Error GoTo nao_achei
+
+        data_lancamento = indice_corresp(produto_cor, "A:A", "B:B", "BASE_APOIO")
+        If data_lancamento = "" Then data_lancamento = WorksheetFunction.MinIfs(svendas.Range("G:G"), svendas.Range("V:V"), produto_cor)
+        .Cells(linha, 1).Value = data_lancamento
+
+        .Cells(linha, 2).Value = produto_cor
         .Cells(linha, 3).Value = indice_corresp(produto_cor, "V:V", "I:I", svendas.Name)
         .Cells(linha, 4).Value = indice_corresp(produto_cor, "V:V", "U:U", svendas.Name)
 
-        On Error GoTo nao_achei
         .Cells(linha, 5).Value = indice_corresp(produto_cor, "Q:Q", "C:C", sprodutos.Name)
         .Cells(linha, 6).Value = indice_corresp(produto_cor, "Q:Q", "I:I", sprodutos.Name)
         .Cells(linha, 8).Value = indice_corresp(produto_cor, "Q:Q", "K:K", sprodutos.Name)
 
         estoque_atual = WorksheetFunction.SumIfs(sprodutos.Range("J:J"), sprodutos.Range("Q:Q"), produto_cor)
+        estoque_inicial = estoque_atual + WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor, svendas.Range("L:L"), "Devoluções*")
         .Cells(linha, 9).Value = estoque_atual
-        .Cells(linha, 10).Value = estoque_atual + WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor, svendas.Range("L:L"), "Devoluções*")
+        .Cells(linha, 10).Value = estoque_inicial
 
         Dim coluna As Integer: coluna = 11
         For Each x_dias In Array(7, 10, 15, 20, 30, 40, 45, 60)
@@ -58,10 +64,10 @@ Sub atualiza_giro(linha As Integer, ByVal produto_cor As String)
             coluna = coluna + 1
         Next
 
+        coluna_venda_dias = 29
         For Each x_dias In Array(7, 10, 15, 20, 30, 40, 45, 60)
-            coluna_venda_dias = 29
             .Cells(5, coluna).Value = "Giro " & x_dias & " dias"
-            .Cells(linha, coluna).Value = .Cells(linha, coluna_venda_dias).Value / (.Cells(linha, coluna_venda_dias).Value + estoque_atual)
+            .Cells(linha, coluna).Value = .Cells(linha, coluna_venda_dias).Value / estoque_inicial
 
             coluna_venda_dias = coluna_venda_dias + 19
             coluna = coluna + 1
