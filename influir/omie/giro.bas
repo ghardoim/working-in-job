@@ -52,11 +52,11 @@ Sub atualiza_giro(linha As Integer, ByVal produto_cor As String)
             inicio_x_dias = coluna
             For Each tamanho In var_tamanhos
                 .Cells(5, coluna).Value = tamanho
-                .Cells(linha, coluna).Value = WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor, svendas.Range("T:T"), tamanho, svendas.Range("G:G"), "<=" & DateAdd("d", x_dias, .Cells(3, 5).Value))
+                .Cells(linha, coluna).Value = WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor, svendas.Range("T:T"), tamanho, svendas.Range("G:G"), "<=" & DateAdd("d", x_dias, data_lancamento))
                 coluna = coluna + 1
             Next
             .Cells(5, coluna).Value = "???"
-            .Cells(linha, coluna).Value = WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor, svendas.Range("T:T"), "", svendas.Range("G:G"), "<=" & DateAdd("d", x_dias, .Cells(3, 5).Value))
+            .Cells(linha, coluna).Value = WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor, svendas.Range("T:T"), "", svendas.Range("G:G"), "<=" & DateAdd("d", x_dias, data_lancamento))
             coluna = coluna + 1
 
             .Cells(5, coluna).Value = "Vendas " & x_dias & " dias"
@@ -75,7 +75,7 @@ Sub atualiza_giro(linha As Integer, ByVal produto_cor As String)
 
         .Cells(linha, coluna + 1).Value = WorksheetFunction.MinIfs(svendas.Range("G:G"), svendas.Range("V:V"), produto_cor)
         .Cells(linha, coluna + 2).Value = WorksheetFunction.MaxIfs(svendas.Range("G:G"), svendas.Range("V:V"), produto_cor)
-        .Cells(linha, coluna).Value = CInt(CDate(.Cells(3, 5).Value) - CDate(.Cells(linha, 1).Value))
+        .Cells(linha, coluna).Value = CInt(CDate(data_lancamento) - Date)
 nao_achei:
     If Err.Number = 1004 Then: .Cells(linha, 2).Interior.ColorIndex = 3
     On Error GoTo 0
