@@ -18,9 +18,9 @@ Sub dezenas_fora_da_combinacao()
                         .Cells(ultima_linha, ultima_coluna).Value = dezena
                     End If
                 Next
+            End With
         Next
     End With
-
     ThisWorkbook.Sheets("PLAN-DEZENAS FORA").Select
 End Sub
 
