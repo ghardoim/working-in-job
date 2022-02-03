@@ -3,19 +3,19 @@ Sub get_vendas()
     var_cores = cores: var_subcores = sub_cores
     Dim base_neriage As Workbook: Set base_neriage = Workbooks.Open(Application.GetOpenFilename("Excel Files (*.xlsx), *"))
     Dim ultima_linha As Integer: ultima_linha = base_neriage.Sheets(1).Range("A1048576").End(xlUp).Row - 1
-
     With ThisWorkbook.Sheets("BASE_VENDAS")
-        .Range("A6:S" & ultima_linha + 3) = base_neriage.Sheets(1).Range("A3:S" & ultima_linha).Value
+        .Range("A6:V" & ultima_linha + 3) = base_neriage.Sheets(1).Range("A3:V" & ultima_linha).Value
         base_neriage.Close (False)
+
         .Range("A6:M" & ultima_linha + 3).SpecialCells(xlCellTypeBlanks).FormulaR1C1 = "=R[-1]C"
         .Range("A6:M" & ultima_linha + 3).Value = .Range("A6:M" & ultima_linha + 3).Value
         Call remove_acento(.Range("I6:I" & ultima_linha + 3))
 
-        For linha = 6 To ultima_linha + 3
+        .Range("G6:G" & ultima_linha + 3).FormulaR1C1 = "=DATE(RC[9],MONTH(DATEVALUE(RC[11]&""1"")),RC[10])"
+        .Range("G6:G" & ultima_linha + 3).Value = .Range("G6:G" & ultima_linha + 3).Value
+        .Range("P6:R" & ultima_linha + 3).Delete Shift:=xlToLeft
 
-            data_tratada = Split(.Cells(linha, 7).Value, "/")
-            If data_tratada(2) = 2022 Then .Cells(linha, 7).Value = CDate(data_tratada(1) & "/" & data_tratada(0) & "/" & data_tratada(2))
-             .Cells(linha, 7).Value = CDate(.Cells(linha, 7).Value)
+        For linha = 6 To ultima_linha + 3
 
             Call set_atributo("ACERVO", linha, 9, 22, 9, "BASE_VENDAS")
             Call set_atributo("PILOTO", linha, 9, 22, 9, "BASE_VENDAS")
