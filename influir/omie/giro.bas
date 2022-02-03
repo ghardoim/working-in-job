@@ -35,19 +35,20 @@ Sub set_giro()
 
             estoque_atual = WorksheetFunction.SumIfs(sprodutos.Range("J:J"), sprodutos.Range("Q:Q"), produto_cor)
             estoque_inicial = estoque_atual + WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor, svendas.Range("L:L"), "Devoluções*")
+            estoque_inicial = estoque_inicial + WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor, svendas.Range("J:J"), "Devolução*", svendas.Range("L:L"), "<>Devoluções*")
             .Cells(linha, 9).Value = estoque_atual
             .Cells(linha, 10).Value = estoque_inicial
 
             Dim coluna As Integer: coluna = 11
-            For Each x_dias In Array(7, 10, 15, 20, 30, 40, 45, 60)
+            For Each x_dias In Array(7, 10, 15, 20, 30, 40, 45, 60, 90)
                 inicio_x_dias = coluna
                 For Each tamanho In var_tamanhos
                     .Cells(5, coluna).Value = tamanho
-                    .Cells(linha, coluna).Value = WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor, svendas.Range("T:T"), tamanho, svendas.Range("G:G"), "<=" & CDbl(DateAdd("d", x_dias, data_lancamento)))
+                    .Cells(linha, coluna).Value = WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor, svendas.Range("T:T"), tamanho, svendas.Range("G:G"), "<=" & CDbl(DateAdd("d", x_dias, data_lancamento)), svendas.Range("L:L"), "<>Devoluções*", svendas.Range("J:J"), "<>Devolução*")
                     coluna = coluna + 1
                 Next
                 .Cells(5, coluna).Value = "???"
-                .Cells(linha, coluna).Value = WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor, svendas.Range("T:T"), "", svendas.Range("G:G"), "<=" & CDbl(DateAdd("d", x_dias, data_lancamento)))
+                .Cells(linha, coluna).Value = WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor, svendas.Range("T:T"), "", svendas.Range("G:G"), "<=" & CDbl(DateAdd("d", x_dias, data_lancamento)), svendas.Range("L:L"), "<>Devoluções*", svendas.Range("J:J"), "<>Devolução*")
                 coluna = coluna + 1
 
                 .Cells(5, coluna).Value = "Vendas " & x_dias & " dias"
@@ -56,16 +57,17 @@ Sub set_giro()
             Next
 
             coluna_venda_dias = 29
-            For Each x_dias In Array(7, 10, 15, 20, 30, 40, 45, 60)
+            For Each x_dias In Array(7, 10, 15, 20, 30, 40, 45, 60, 90)
                 .Cells(5, coluna).Value = "Giro " & x_dias & " dias"
                 .Cells(linha, coluna).Value = .Cells(linha, coluna_venda_dias).Value / estoque_inicial
                 coluna_venda_dias = coluna_venda_dias + 19
                 coluna = coluna + 1
             Next
 
+            .Cells(linha, coluna).Value = CInt(Date - CDate(data_lancamento))
             .Cells(linha, coluna + 1).Value = WorksheetFunction.MinIfs(svendas.Range("G:G"), svendas.Range("V:V"), produto_cor)
             .Cells(linha, coluna + 2).Value = WorksheetFunction.MaxIfs(svendas.Range("G:G"), svendas.Range("V:V"), produto_cor)
-            .Cells(linha, coluna).Value = CInt(Date - CDate(data_lancamento))
+            .Cells(linha, coluna + 3).Value = WorksheetFunction.CountIfs(svendas.Range("V:V"), produto_cor)
 
             On Error GoTo 0
         End With
