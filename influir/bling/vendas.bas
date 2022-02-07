@@ -10,9 +10,10 @@ Sub get_vendas()
         Dim page As Integer: page = 1: Dim ult_linha As Integer: ult_linha = .Range("A1048576").End(xlUp).Row + 1
 
         For linha = ult_linha - 1 To 6 Step -1
-            If ult_inclusao <= .Range("P" & linha).Value Then .Range("A" & linha).EntireRow.Delete Else Exit For
+            If Year(ult_inclusao) = Year(CDate(.Range("P" & linha).Value)) Then .Range("A" & linha).EntireRow.Delete Else Exit For
             ult_linha = linha
         Next
+        ult_inclusao = CDate(WorksheetFunction.Max(.Range("P:P")) + 1)
         Do While True
             With request
                 .Open "GET", api_url & "pedidos/page=" & page & "/json/?loja=" & id_loja & _
