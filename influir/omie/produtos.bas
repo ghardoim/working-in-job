@@ -6,6 +6,18 @@ Sub get_produtos()
     With ThisWorkbook.Sheets("BASE_PRODUTOS")
         .Range("A6:L" & ultima_linha + 3) = base_neriage.Sheets(1).Range("A3:L" & ultima_linha).Value
         base_neriage.Close (False)
+
+        .Range("A6:A" & ultima_linha + 3).FormatConditions.AddUniqueValues
+        With .Range("A6:A" & ultima_linha + 3).FormatConditions(1)
+            .DupeUnique = xlDuplicate
+            .Interior.Color = RGB(200, 200, 200)
+        End With
+        .Range("A5:A" & ultima_linha + 3).AutoFilter Field:=1, Criteria1:=RGB(200, 200, 200), Operator:=xlFilterCellColor
+        .Range("A6:A" & ultima_linha + 3).SpecialCells(xlCellTypeVisible).Clear
+        .Range("A5:A" & ultima_linha + 3).AutoFilter
+
+        .Range("A6:G" & ultima_linha + 3).SpecialCells(xlCellTypeBlanks).FormulaR1C1 = "=R[-1]C"
+        .Range("A6:G" & ultima_linha + 3).Value = .Range("A6:G" & ultima_linha + 3).Value
         Call remove_acento(.Range("A6:B" & ultima_linha + 3))
 
         For linha = 6 To ultima_linha + 3
