@@ -1,4 +1,5 @@
 from __future__ import print_function
+import enum
 
 from google.oauth2.credentials import Credentials
 from email.mime.multipart import MIMEMultipart
@@ -11,6 +12,7 @@ from datetime import timedelta as td
 from datetime import datetime as dt
 import win32com.client as win32
 from email import encoders
+from textwrap import wrap
 import logging as log
 from os import getenv
 import pandas as pd
@@ -78,10 +80,12 @@ class DeskRobot:
             self.__email_server = smtplib.SMTP("smtp.gmail.com: 587")
             self.__email_server.starttls()
             self.__email_server.login(self.__email, self.__senha)
-        except pywintypes.com_error:
+        except pywintypes.com_error as word_error:
             log.error("Problemas ao tentar abrir o word.")
-        except smtplib.SMTPAuthenticationError:
+            log.error(str(word_error))
+        except smtplib.SMTPAuthenticationError as email_error:
             log.error("Problemas ao tentar logar no email.")
+            log.error(str(email_error))
 
         self.__id_worksheet = "1yHq1t_ZiePFEJdZmADL6GI4Zt3w3ZpGUdcV8o7AmEAU"
         self.__doc_template = f"{dirname(__file__)}/ppp-template.docx"
@@ -128,6 +132,8 @@ class DeskRobot:
 
     def execute(self):
         self.__get_worksheet_info()
+        log.info("Pendentes de envio:")
+        log.info(self.__df)
         for _, row in self.__df.iterrows():
             try:
                 log.info("Abrindo template.")
@@ -137,10 +143,15 @@ class DeskRobot:
 
                 template = word_doc.Content.Find
                 for column in self.__df.columns:
-                    pathfilename = f"{dirname(__file__)}\documents\{row[r'{{ NOME }}'].lower()}"
-                    self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", column, row[column], template)
-                    log.info(f"Substituindo {column} <--> {row[column]}")
+                    if column in [r"{{ DESCRICAO-ATIVIDADES }}", r"{{ FATOR-RISCO }}"]:
+                        for p, parte in enumerate(wrap(row[column], len(row[column]) / 4)):
+                            log.info(f"Substituindo {column}-PT-{p} <--> {parte}")
+                            self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", f"{column}-PT-{p}", parte, template)
+                    else:
+                        self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", column, row[column], template)
+                        log.info(f"Substituindo {column} <--> {row[column]}")
 
+                pathfilename = f"{dirname(__file__)}\documents\{row[r'{{ NOME }}'].lower()}"
                 log.info(f"Salvando arquivos.")
                 word_doc.SaveAs(f"{pathfilename}.docx")
                 word_doc.SaveAs(f"{pathfilename}.pdf", FileFormat = 17)
