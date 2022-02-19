@@ -49,9 +49,9 @@ de_para_colunas = {
     "Informe o CARGO do REPRESENTANTE LEGAL da empresa:": r"{{ CARGO-REPRESENTANTE }}",
     "Informe o CNPJ da empresa:": r"{{ CNPJ }}",
     "Descrição das atividades": r"{{ DESCRICAO-ATIVIDADES }}",
-    "Tipo": r"{{ TIPO-RISCO }}",
-    "Fator de Risco": r"{{ FATOR-RISCO }}",
-    "Intens./Conc.": r"{{ TIPO-EXPOSICAO }}",
+    **{f"{kv}° Tipo": r"{{ TIPO-RISCO }}-PT-" + f"{kv}" for kv in range(1, 13)},
+    **{f"{kv}° Fator de Risco": r"{{ FATOR-RISCO }}-PT-" + f"{kv}" for kv in range(1, 13)},
+    **{f"{kv}° Intens./Conc.": r"{{ TIPO-EXPOSICAO }}-PT-" + f"{kv}" for kv in range(1, 13)},
     "Técnica Utilizada": r"{{ TECNICA }}",
     "EPC Eficaz (S/N)": r"{{ EPC }}",
     "EPI Eficaz (S/N)": r"{{ EPI }}",
@@ -89,7 +89,7 @@ class DeskRobot:
 
         self.__id_worksheet = "1yHq1t_ZiePFEJdZmADL6GI4Zt3w3ZpGUdcV8o7AmEAU"
         self.__doc_template = f"{dirname(__file__)}/ppp-template.docx"
-        self.__address = "tratamento de dados!A:AO"
+        self.__address = "tratamento de dados!A:BV"
         self.__df = None
 
     def __del__(self):
@@ -133,7 +133,6 @@ class DeskRobot:
     def execute(self):
         self.__get_worksheet_info()
         log.info("Pendentes de envio:")
-        log.info(self.__df)
         for _, row in self.__df.iterrows():
             try:
                 log.info("Abrindo template.")
@@ -143,8 +142,9 @@ class DeskRobot:
 
                 template = word_doc.Content.Find
                 for column in self.__df.columns:
-                    if column in [r"{{ DESCRICAO-ATIVIDADES }}", r"{{ FATOR-RISCO }}"]:
-                        for p, parte in enumerate(wrap(row[column], len(row[column]) / 4)):
+                    if column in [ r"{{ DESCRICAO-ATIVIDADES }}" ]:
+                        info_desc = row[column] if len(row[column]) > 10 else "-" * 1275
+                        for p, parte in enumerate(wrap(info_desc, int(len(info_desc) / 5))):
                             log.info(f"Substituindo {column}-PT-{p} <--> {parte}")
                             self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", f"{column}-PT-{p}", parte, template)
                     else:
