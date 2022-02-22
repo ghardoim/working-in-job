@@ -1,5 +1,4 @@
 from __future__ import print_function
-import enum
 
 from google.oauth2.credentials import Credentials
 from email.mime.multipart import MIMEMultipart
@@ -48,6 +47,7 @@ de_para_colunas = {
     "Informe o NIT/PIS do REPRESENTANTE LEGAL da empresa:": r"{{ NIT-PIS-REPRESENTANTE }}",
     "Informe o CARGO do REPRESENTANTE LEGAL da empresa:": r"{{ CARGO-REPRESENTANTE }}",
     "Informe o CNPJ da empresa:": r"{{ CNPJ }}",
+    "SETOR": r"{{ SETOR }}",
     "Descrição das atividades": r"{{ DESCRICAO-ATIVIDADES }}",
     **{f"{kv}° Tipo": r"{{ TIPO-RISCO }}-PT-" + f"{kv}" for kv in range(1, 13)},
     **{f"{kv}° Fator de Risco": r"{{ FATOR-RISCO }}-PT-" + f"{kv}" for kv in range(1, 13)},
@@ -89,7 +89,7 @@ class DeskRobot:
 
         self.__id_worksheet = "1yHq1t_ZiePFEJdZmADL6GI4Zt3w3ZpGUdcV8o7AmEAU"
         self.__doc_template = f"{dirname(__file__)}/ppp-template.docx"
-        self.__address = "tratamento de dados!A:BV"
+        self.__address = "tratamento de dados!A:BW"
         self.__df = None
 
     def __del__(self):
@@ -151,6 +151,8 @@ class DeskRobot:
                         self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", column, row[column], template)
                         log.info(f"Substituindo {column} <--> {row[column]}")
 
+                self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", r"{{ DT-HOJE }}", dt.now().strftime("%d/%m/%Y"), template)
+                log.info(f"Inserindo data de hoje: {dt.now().strftime('%d/%m/%Y')}")
                 pathfilename = f"{dirname(__file__)}\documents\{row[r'{{ NOME }}'].lower()}"
                 log.info(f"Salvando arquivos.")
                 word_doc.SaveAs(f"{pathfilename}.docx")
