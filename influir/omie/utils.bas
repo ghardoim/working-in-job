@@ -38,3 +38,15 @@ Function indice_corresp(ByVal isso As String, essa_coluna As String, naquela_col
         indice_corresp = .Index(Sheets(sheet_name).Range(naquela_coluna), .Match(isso, Sheets(sheet_name).Range(essa_coluna), 0))
     End With
 End Function
+
+Public Function all_unique(col_letter As String, sheet_name As String) As Variant
+    Dim unicos As New Collection
+    On Error Resume Next
+    For Each valor In Sheets(sheet_name).Range(col_letter & "6:" & col_letter & Sheets(sheet_name).Range(col_letter & "1048576").End(xlUp).Row)
+        If Len(valor) > 0 And valor.EntireRow.Hidden = False Then
+            unicos.Add valor, CStr(valor)
+        End If
+    Next
+    On Error GoTo 0
+    all_unique = unicos
+End Function
