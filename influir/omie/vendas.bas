@@ -39,6 +39,7 @@ Sub get_vendas()
                 .Cells(linha, 22).Value = "ROSE"
             End If
             .Cells(linha, 23).Value = Trim(.Cells(linha, 9).Value & " " & .Cells(linha, 22).Value)
+            .Cells(linha, 24).Value = "'" & Year(.Cells(linha, 7).Value) & "." & Format(Month(.Cells(linha, 7).Value), "00")
         Next
     End With
     Call MsgBox("agora todos as vendas da planilha escolhida estão aqui! :D", vbInformation, "Base Atualizada")

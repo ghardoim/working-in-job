@@ -75,6 +75,7 @@ Sub set_giro()
             .Cells(linha, coluna + 1).Value = WorksheetFunction.Subtotal(5, svendas.Range("G:G"))
             .Cells(linha, coluna + 2).Value = WorksheetFunction.Subtotal(4, svendas.Range("G:G"))
             .Cells(linha, coluna + 3).Value = WorksheetFunction.Subtotal(9, svendas.Range("T:T"))
+            .Cells(linha, coluna + 4).Value = .Cells(linha, coluna + 3).Value / estoque_inicial
 
             On Error GoTo 0        
         End With
