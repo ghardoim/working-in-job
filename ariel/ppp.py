@@ -49,9 +49,9 @@ de_para_colunas = {
     "Informe o CNPJ da empresa:": r"{{ CNPJ }}",
     "SETOR": r"{{ SETOR }}",
     "Descrição das atividades": r"{{ DESCRICAO-ATIVIDADES }}",
-    **{f"{kv}° Tipo": r"{{ TIPO-RISCO }}-PT-" + f"{kv}" for kv in range(1, 13)},
-    **{f"{kv}° Fator de Risco": r"{{ FATOR-RISCO }}-PT-" + f"{kv}" for kv in range(1, 13)},
-    **{f"{kv}° Intens./Conc.": r"{{ TIPO-EXPOSICAO }}-PT-" + f"{kv}" for kv in range(1, 13)},
+    **{f"{kv}° Tipo": r"{{ TIPO-RISCO }}-PT-" + f"{kv:02d}" for kv in range(1, 13)},
+    **{f"{kv}° Fator de Risco": r"{{ FATOR-RISCO }}-PT-" + f"{kv:02d}" for kv in range(1, 13)},
+    **{f"{kv}° Intens./Conc.": r"{{ TIPO-EXPOSICAO }}-PT-" + f"{kv:02d}" for kv in range(1, 13)},
     "Técnica Utilizada": r"{{ TECNICA }}",
     "EPC Eficaz (S/N)": r"{{ EPC }}",
     "EPI Eficaz (S/N)": r"{{ EPI }}",
@@ -132,7 +132,8 @@ class DeskRobot:
 
     def execute(self):
         self.__get_worksheet_info()
-        log.info("Pendentes de envio:")
+        log.info(f"Pendentes de envio: {self.__df.shape[0]}")
+        print(self.__df)
         for _, row in self.__df.iterrows():
             try:
                 log.info("Abrindo template.")
@@ -143,10 +144,11 @@ class DeskRobot:
                 template = word_doc.Content.Find
                 for column in self.__df.columns:
                     if column in [ r"{{ DESCRICAO-ATIVIDADES }}" ]:
-                        info_desc = row[column] if len(row[column]) > 10 else "-" * 1275
+                        info_desc = row[column] if len(row[column]) > 10 else "-" * 100
                         for p, parte in enumerate(wrap(info_desc, int(len(info_desc) / 5))):
                             log.info(f"Substituindo {column}-PT-{p} <--> {parte}")
                             self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", f"{column}-PT-{p}", parte, template)
+                        self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", r"{{ DESCRICAO-ATIVIDADES }}-PT-5", "", template)
                     else:
                         self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", column, row[column], template)
                         log.info(f"Substituindo {column} <--> {row[column]}")
@@ -164,6 +166,7 @@ class DeskRobot:
                 log.error("Problemas ao tentar substituir as informações.")
                 log.error(str(problema))
                 log.error(f"Verificar -> {row[r'{{ NOME }}']}.")
+                continue
             try:
                 log.info("Configurando email.")
                 email = MIMEMultipart()
