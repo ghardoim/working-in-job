@@ -7,14 +7,9 @@ Sub get_produtos()
         .Range("A6:L" & ultima_linha + 3) = base_neriage.Sheets(1).Range("A3:L" & ultima_linha).Value
         base_neriage.Close (False)
 
-        .Range("A6:A" & ultima_linha + 3).FormatConditions.AddUniqueValues
-        With .Range("A6:A" & ultima_linha + 3).FormatConditions(1)
-            .DupeUnique = xlDuplicate
-            .Interior.Color = RGB(200, 200, 200)
-        End With
-        .Range("A5:A" & ultima_linha + 3).AutoFilter Field:=1, Criteria1:=RGB(200, 200, 200), Operator:=xlFilterCellColor
-        .Range("A6:A" & ultima_linha + 3).SpecialCells(xlCellTypeVisible).Clear
-        .Range("A5:A" & ultima_linha + 3).AutoFilter
+        .Range("A5").AutoFilter Field:=8, Criteria1:="="
+        .Range("A6:C" & ultima_linha + 3).SpecialCells(xlCellTypeVisible).Clear
+        .Range("A5").AutoFilter
 
         .Range("A6:G" & ultima_linha + 3).SpecialCells(xlCellTypeBlanks).FormulaR1C1 = "=R[-1]C"
         .Range("A6:G" & ultima_linha + 3).Value = .Range("A6:G" & ultima_linha + 3).Value
