@@ -17,8 +17,6 @@ Sub get_vendas()
 
         For linha = 6 To ultima_linha + 3
      
-            Call set_atributo("ACERVO", linha, 9, 23, 9, "BASE_VENDAS")
-            Call set_atributo("PILOTO", linha, 9, 23, 9, "BASE_VENDAS")
             On Error Resume Next
             For Each tamanho In tamanhos
                 descricao = Split(.Cells(linha, 9), " ")
