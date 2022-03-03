@@ -56,6 +56,8 @@ de_para_colunas = {
     "EPC Eficaz (S/N)": r"{{ EPC }}",
     "EPI Eficaz (S/N)": r"{{ EPI }}",
     "CNAE": r"{{ CNAE }}",
+    "16.2 NIT TST": r"{{ NIT-PIS-RA }}",
+    "18.2 NIT MEDICO": r"{{ NIT-PIS-MB }}",
     "Registro Conselho de Classe (REGISTROS AMBIENTAIS)": r"{{ REGISTRO-RA }}",
     "Nome do Profissional Legalmente Habilitado (REGISTROS AMBIENTAIS)": r"{{ NOME-RESPONSAVEL-RA }}",
     "Registro Conselho de Classe (MONITORAÇÃO BIOLÓGICA)": r"{{ REGISTRO-MB }}",
@@ -89,7 +91,7 @@ class DeskRobot:
 
         self.__id_worksheet = "1yHq1t_ZiePFEJdZmADL6GI4Zt3w3ZpGUdcV8o7AmEAU"
         self.__doc_template = f"{dirname(__file__)}/ppp-template.docx"
-        self.__address = "tratamento de dados!A:BW"
+        self.__address = "tratamento de dados!A:BY"
         self.__df = None
 
     def __del__(self):
@@ -145,7 +147,7 @@ class DeskRobot:
                 for column in self.__df.columns:
                     if column in [ r"{{ DESCRICAO-ATIVIDADES }}" ]:
                         info_desc = row[column] if len(row[column]) > 10 else "-" * 100
-                        for p, parte in enumerate(wrap(info_desc, int(len(info_desc) / 5))):
+                        for p, parte in enumerate(wrap(info_desc, int(len(info_desc) / 9))):
                             log.info(f"Substituindo {column}-PT-{p} <--> {parte}")
                             self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", f"{column}-PT-{p}", parte, template)
                         self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", r"{{ DESCRICAO-ATIVIDADES }}-PT-5", "", template)
