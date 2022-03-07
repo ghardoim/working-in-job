@@ -122,6 +122,7 @@ class DeskRobot:
         self.__df.columns = self.__df.iloc[0]
         self.__df = self.__df.fillna("").rename(columns = de_para_colunas).drop(self.__df.index[0])
         self.__df = self.__df[self.__df[r"{{ REALIZADO }}"] == ""]
+        self.__df = self.__df[self.__df[r"{{ DATA-HORA }}"] != ""]
 
     def __get_attach(self, attach_path):
         log.info(f"Anexando arquivo '{basename(attach_path)}'.")
@@ -147,9 +148,9 @@ class DeskRobot:
                 for column in self.__df.columns:
                     if column in [ r"{{ DESCRICAO-ATIVIDADES }}" ]:
                         info_desc = row[column] if len(row[column]) > 10 else "-" * 100
-                        for p, parte in enumerate(wrap(info_desc, int(len(info_desc) / 9))):
-                            log.info(f"Substituindo {column}-PT-{p} <--> {parte}")
-                            self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", f"{column}-PT-{p}", parte, template)
+                        for p, parte in enumerate(wrap(info_desc, int(len(info_desc) / 11))):
+                            log.info(f"Substituindo {column}-PT-{p + 1:02d} <--> {parte}")
+                            self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", f"{column}-PT-{p + 1:02d}", parte, template)
                         self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", r"{{ DESCRICAO-ATIVIDADES }}-PT-5", "", template)
                     else:
                         self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", column, row[column], template)
@@ -169,6 +170,7 @@ class DeskRobot:
                 log.error(str(problema))
                 log.error(f"Verificar -> {row[r'{{ NOME }}']}.")
                 continue
+
             try:
                 log.info("Configurando email.")
                 email = MIMEMultipart()
