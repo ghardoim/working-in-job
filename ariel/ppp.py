@@ -147,11 +147,12 @@ class DeskRobot:
                 template = word_doc.Content.Find
                 for column in self.__df.columns:
                     if column in [ r"{{ DESCRICAO-ATIVIDADES }}" ]:
-                        info_desc = row[column] if len(row[column]) > 10 else "-" * 100
-                        for p, parte in enumerate(wrap(info_desc, int(len(info_desc) / 11))):
-                            log.info(f"Substituindo {column}-PT-{p + 1:02d} <--> {parte}")
-                            self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", f"{column}-PT-{p + 1:02d}", parte, template)
-                        self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", r"{{ DESCRICAO-ATIVIDADES }}-PT-5", "", template)
+                        desc = row[column] if len(row[column]) > 10 else "-" * 100
+                        for parte, p in enumerate(range(0, len(desc), 254)):
+                            log.info(f"Substituindo {column}-PT-{parte + 1:02d} <--> {desc[p: p + 254]}")
+                            self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", f"{column}-PT-{parte + 1:02d}", desc[p: p + 254], template)
+                        for limpar in range(parte + 2, 31):
+                            self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", f"{column}-PT-{limpar:02d}", "", template)
                     else:
                         self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", column, row[column], template)
                         log.info(f"Substituindo {column} <--> {row[column]}")
