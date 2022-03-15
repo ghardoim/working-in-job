@@ -52,7 +52,7 @@ de_para_colunas = {
     **{f"{kv}° Tipo": r"{{ TIPO-RISCO }}-PT-" + f"{kv:02d}" for kv in range(1, 13)},
     **{f"{kv}° Fator de Risco": r"{{ FATOR-RISCO }}-PT-" + f"{kv:02d}" for kv in range(1, 13)},
     **{f"{kv}° Intens./Conc.": r"{{ TIPO-EXPOSICAO }}-PT-" + f"{kv:02d}" for kv in range(1, 13)},
-    "Técnica Utilizada": r"{{ TECNICA }}",
+    **{f"{kv}° Técnica Utilizada": r"{{ TECNICA }}-PT-" + f"{kv:02d}" for kv in range(1, 13)},
     "EPC Eficaz (S/N)": r"{{ EPC }}",
     "EPI Eficaz (S/N)": r"{{ EPI }}",
     "CNAE": r"{{ CNAE }}",
@@ -89,9 +89,9 @@ class DeskRobot:
             log.error("Problemas ao tentar logar no email.")
             log.error(str(email_error))
 
-        self.__id_worksheet = "1yHq1t_ZiePFEJdZmADL6GI4Zt3w3ZpGUdcV8o7AmEAU"
+        self.__id_worksheet = f'{getenv("ID_FILE")}'
         self.__doc_template = f"{dirname(__file__)}/ppp-template.docx"
-        self.__address = "tratamento de dados!A:BY"
+        self.__address = "tratamento de dados!A:CJ"
         self.__df = None
 
     def __del__(self):
