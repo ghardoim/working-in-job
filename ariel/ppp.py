@@ -11,7 +11,6 @@ from datetime import timedelta as td
 from datetime import datetime as dt
 import win32com.client as win32
 from email import encoders
-from textwrap import wrap
 import logging as log
 from os import getenv
 import pandas as pd
@@ -76,8 +75,10 @@ class DeskRobot:
         self.__senha = senha
         try:
             self.__word_app = win32.Dispatch("Word.Application")
-            self.__excel_app = win32.Dispatch("Excel.Application")
             self.__word_app.Visible = False
+            self.__word_doc = None
+            self.__excel_app = win32.Dispatch("Excel.Application")
+
             self.__sheets_service = build('sheets', 'v4', credentials = self.__connect())
             self.__email_server = smtplib.SMTP("smtp.gmail.com: 587")
             self.__email_server.starttls()
@@ -96,7 +97,10 @@ class DeskRobot:
 
     def __del__(self):
         try:
+            if self.__word_doc:
+                self.__word_doc.Close(False)
             self.__word_app.Quit()
+
             self.__excel_app.Quit()
             self.__email_server.quit()
         except:
@@ -137,14 +141,13 @@ class DeskRobot:
         self.__get_worksheet_info()
         log.info(f"Pendentes de envio: {self.__df.shape[0]}")
         print(self.__df)
+        self.__excel_app.Workbooks.Open(Filename=f"{dirname(__file__)}\ppp.xlsm", ReadOnly=1)
+        self.__excel_app.Visible = False
         for _, row in self.__df.iterrows():
             try:
                 log.info("Abrindo template.")
-                word_doc = self.__word_app.Documents.Open(self.__doc_template)
-                excel_doc = self.__excel_app.Workbooks.Open(Filename=f"{dirname(__file__)}\ppp.xlsm", ReadOnly=1)
-                self.__excel_app.Visible = False
-
-                template = word_doc.Content.Find
+                self.__word_doc = self.__word_app.Documents.Open(self.__doc_template)
+                template = self.__word_doc.Content.Find
                 for column in self.__df.columns:
                     if column in [ r"{{ DESCRICAO-ATIVIDADES }}" ]:
                         desc = row[column] if len(row[column]) > 10 else "-" * 100
@@ -161,10 +164,11 @@ class DeskRobot:
                 log.info(f"Inserindo data de hoje: {dt.now().strftime('%d/%m/%Y')}")
                 pathfilename = f"{dirname(__file__)}\documents\{row[r'{{ NOME }}'].lower()}"
                 log.info(f"Salvando arquivos.")
-                word_doc.SaveAs(f"{pathfilename}.docx")
-                word_doc.SaveAs(f"{pathfilename}.pdf", FileFormat = 17)
-                word_doc.Close(False)
-                excel_doc.Close(False)
+                self.__word_doc.SaveAs(f"{pathfilename}.docx")
+                self.__word_doc.SaveAs(f"{pathfilename}.pdf", FileFormat = 17)
+
+                self.__word_doc.Close(False)
+                self.__word_doc = None
 
             except Exception as problema:
                 log.error("Problemas ao tentar substituir as informações.")
