@@ -1,11 +1,11 @@
 Sub set_giro()
     Dim linha As Integer: linha = 6
     Call liga_desliga(False)
-
-    ThisWorkbook.Sheets("BASE_PRODUTOS").Range("A5").AutoFilter Field:=14, Criteria1:="="
+    Call drop_giro
+    ThisWorkbook.Sheets("BASE_PRODUTOS").Range("A5").AutoFilter Field:=13, Criteria1:="="
     ThisWorkbook.Sheets("BASE_VENDAS").Range("A5").AutoFilter Field:=11, Criteria1:="Autorizado"
     ThisWorkbook.Sheets("BASE_VENDAS").Range("A5").AutoFilter Field:=10, Operator:=xlFilterValues, _
-                        Criteria1:=Array("Venda de Produto pelo PDV", "Pedido de Venda", "Devolução de Venda", "Devolução (Emissão do Cliente)")
+        Criteria1:=Array("Venda de Produto pelo PDV", "Pedido de Venda", "Devolução de Venda", "Devolução (Emissão do Cliente)")
     ThisWorkbook.Sheets("BASE_VENDAS").Range("A5").AutoFilter Field:=12, Operator:=xlFilterValues, _
                         Criteria1:=Array("Clientes - Vendas PDV", "Clientes - Vendas Malinha / Whatsapp", _
                         "Clientes - Vendas Farfetch Nacional", "Clientes - Vendas Farfetch Internacional", _
@@ -24,7 +24,7 @@ Sub set_giro()
             On Error Resume Next
             svendas.Range("A5").AutoFilter Field:=23, Criteria1:=produto_cor
 
-            data_lancamento = indice_corresp(produto_cor, "A:A", "B:B", "BASE_APOIO")
+            data_lancamento = indice_corresp(produto_cor, "B:B", "C:C", "BASE_APOIO")
             If data_lancamento = "" Then data_lancamento = WorksheetFunction.Subtotal(5, svendas.Range("G:G"))
             .Cells(linha, 1).Value = data_lancamento
 
@@ -32,11 +32,11 @@ Sub set_giro()
             .Cells(linha, 3).Value = indice_corresp(produto_cor, "W:W", "I:I", svendas.Name)
             .Cells(linha, 4).Value = indice_corresp(produto_cor, "W:W", "V:V", svendas.Name)
 
-            .Cells(linha, 5).Value = indice_corresp(produto_cor, "Q:Q", "C:C", sprodutos.Name)
-            .Cells(linha, 6).Value = indice_corresp(produto_cor, "Q:Q", "I:I", sprodutos.Name)
-            .Cells(linha, 8).Value = indice_corresp(produto_cor, "Q:Q", "K:K", sprodutos.Name)
+            .Cells(linha, 5).Value = indice_corresp(produto_cor, "P:P", "C:C", sprodutos.Name)
+            .Cells(linha, 6).Value = indice_corresp(produto_cor, "P:P", "I:I", sprodutos.Name)
+            .Cells(linha, 8).Value = indice_corresp(produto_cor, "P:P", "K:K", sprodutos.Name)
 
-            estoque_atual = WorksheetFunction.SumIfs(sprodutos.Range("J:J"), sprodutos.Range("Q:Q"), produto_cor)
+            estoque_atual = WorksheetFunction.SumIfs(sprodutos.Range("J:J"), sprodutos.Range("P:P"), produto_cor)
             estoque_inicial = estoque_atual + WorksheetFunction.Subtotal(9, svendas.Range("T:T"))
             .Cells(linha, 9).Value = estoque_atual
             .Cells(linha, 10).Value = estoque_inicial
@@ -77,7 +77,7 @@ Sub set_giro()
             .Cells(linha, coluna + 3).Value = WorksheetFunction.Subtotal(9, svendas.Range("T:T"))
             .Cells(linha, coluna + 4).Value = .Cells(linha, coluna + 3).Value / estoque_inicial
 
-            On Error GoTo 0        
+            On Error GoTo 0
         End With
         linha = linha + 1
     Next
