@@ -3,6 +3,7 @@ Sub get_clientes()
     With Sheets("BASE_CLIENTES")
         .Rows("6:1048576").Delete
 
+        Dim bvendas As Worksheet: Set bvendas = Sheets("BASE_VENDAS")
         Dim response As String: Dim cliente As Dictionary: Dim json_obj As Dictionary
         Dim request As New WinHttp.WinHttpRequest: Dim objeto_retornado As New Dictionary
         Dim ult_inclusao As Date: ult_inclusao = CDate(WorksheetFunction.Max(.Range("J:J"))) + 1
@@ -37,25 +38,40 @@ Sub get_clientes()
                 .Cells(ult_linha, 9).Value = cliente("email")
                 .Cells(ult_linha, 10).Value = cliente("clienteDesde")
 
-                ultima_compra = WorksheetFunction.MaxIfs(Sheets("BASE_VENDAS").Range("P:P"), Sheets("BASE_VENDAS").Range("Z:Z"), nome)
-                valor_total = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("F:F"), Sheets("BASE_VENDAS").Range("Z:Z"), nome)
+                On Error Resume Next
+                ultima_compra = WorksheetFunction.MaxIfs(bvendas.Range("P:P"), bvendas.Range("Z:Z"), nome)
+                primeira_compra = WorksheetFunction.MinIfs(bvendas.Range("P:P"), bvendas.Range("Z:Z"), nome)
+                On Error GoTo 0
+
+                valor_total = WorksheetFunction.SumIfs(bvendas.Range("F:F"), bvendas.Range("Z:Z"), nome, bvendas.Range("W:W"), "<>Cancelado")
                 .Cells(ult_linha, 11).Value = IIf(ultima_compra <> 0, ultima_compra, "")
                 .Cells(ult_linha, 12).Value = IIf(ultima_compra <> 0, Date - ultima_compra, "")
                 .Cells(ult_linha, 13).Value = valor_total
 
                 For am = 0 To UBound(anos_meses)
                     .Cells(5, am + 14).Value = "'" & anos_meses(am)
-                    .Cells(ult_linha, am + 14).Value = WorksheetFunction.SumIfs(Sheets("BASE_VENDAS").Range("F:F"), Sheets("BASE_VENDAS").Range("Q:Q"), anos_meses(am), Sheets("BASE_VENDAS").Range("Z:Z"), nome)
+                    .Cells(ult_linha, am + 14).Value = WorksheetFunction.SumIfs(bvendas.Range("F:F"), bvendas.Range("Q:Q"), anos_meses(am), bvendas.Range("Z:Z"), nome, bvendas.Range("W:W"), "<>Cancelado")
                 Next
                 Set range_anomes = .Range(.Cells(ult_linha, 14), .Cells(ult_linha, UBound(anos_meses) + 14))
                 n_meses_venda = WorksheetFunction.CountIf(range_anomes, ">0")
+
+                ticket_medio = 0
                 If n_meses_venda <> 0 Then ticket_medio = WorksheetFunction.Sum(range_anomes) / n_meses_venda
 
                 .Cells(ult_linha, UBound(anos_meses) + 15).Value = ticket_medio
-                If ticket_medio > .Range("B3").Value Then .Cells(ult_linha, UBound(anos_meses) + 16).Value = "VIP"
-                If ticket_medio > .Range("C3").Value Then .Cells(ult_linha, UBound(anos_meses) + 16).Value = "Potencial"
-                If WorksheetFunction.CountIf(.Range(.Cells(ult_linha, 13), .Cells(ult_linha, UBound(anos_meses) + 15)), "<>0") _
-                    >= 6 Then .Cells(ult_linha, UBound(anos_meses) + 16).Value = "Recorrente"
+                If ticket_medio > .Range("B3").Value Then .Cells(ult_linha, UBound(anos_meses) + 16).Value = "Potencial"
+                If ticket_medio > .Range("C3").Value Then .Cells(ult_linha, UBound(anos_meses) + 16).Value = "VIP"
+                If n_meses_venda >= 6 Then .Cells(ult_linha, UBound(anos_meses) + 17).Value = "X"
+                .Cells(ult_linha, UBound(anos_meses) + 18).Value = IIf(primeira_compra <> 0, primeira_compra, "")
+                If Year(Date) = Year(.Cells(ult_linha, UBound(anos_meses) + 18).Value) Then .Cells(ult_linha, UBound(anos_meses) + 19).Value = "CLIENTE NOVO"
+                 
+                For am = 0 To UBound(anos_meses)
+                    .Cells(5, am + 20 + UBound(anos_meses)).Value = "'" & anos_meses(am)
+                    .Cells(ult_linha, am + 20 + UBound(anos_meses)).Value = IIf(.Cells(ult_linha, am + 14).Value > 0, 1, 0)
+                Next
+                .Cells(5, (2 * UBound(anos_meses)) + 21).Value = "Ticket Médio"
+                .Cells(ult_linha, (2 * UBound(anos_meses)) + 21).Value = IIf(.Cells(ult_linha, UBound(anos_meses) + 15).Value > 0, 1, 0)
+
                 ult_linha = ult_linha + 1
             Next
             page = page + 1
@@ -65,8 +81,4 @@ Sub get_clientes()
     End With
     Call MsgBox("agora todos os clientes cadastrados no bling estão aqui! :D", vbInformation, "Base Atualizada")
     Call liga_desliga(True)
-End Sub
-
-Private Sub Worksheet_Change(ByVal Target As Range)
-    If Target.Address = Range("B3").Address Or Target.Address = Range("C3").Address Then Call get_clientes
 End Sub
