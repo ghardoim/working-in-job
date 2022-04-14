@@ -77,6 +77,17 @@ Sub set_giro()
             .Cells(linha, coluna + 3).Value = WorksheetFunction.Subtotal(9, svendas.Range("T:T"))
             .Cells(linha, coluna + 4).Value = .Cells(linha, coluna + 3).Value / estoque_inicial
 
+            coluna = coluna + 5
+            For Each tamanho In var_tamanhos
+                .Cells(5, coluna).Value = "Giro " & tamanho
+                svendas.Range("A5").AutoFilter Field:=21, Criteria1:=tamanho
+                venda_tamanho = WorksheetFunction.Subtotal(9, svendas.Range("T:T"))
+                estoque_tamanho = venda_tamanho + WorksheetFunction.SumIfs(sprodutos.Range("J:J"), sprodutos.Range("P:P"), produto_cor, sprodutos.Range("O:O"), tamanho)
+                .Cells(linha, coluna).Value = venda_tamanho / estoque_tamanho
+                coluna = coluna + 1
+            Next
+            svendas.Range("A5").AutoFilter Field:=21
+
             On Error GoTo 0
         End With
         linha = linha + 1
