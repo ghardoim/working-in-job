@@ -64,7 +64,7 @@ de_para_colunas = {
     "Data de emissão (geração do PDF) =hoje()": r"{{ REALIZADO }}"
 }
 log.basicConfig(level = log.INFO, format = "[%(asctime)s] %(levelname)s: %(message)s", datefmt = "%d-%m-%Y %H:%M", handlers = [
-    log.FileHandler("deskrobotlog.log"),
+    log.FileHandler("ppp.log"),
     log.StreamHandler()
 ])
 
@@ -108,7 +108,7 @@ class DeskRobot:
 
     def __connect(self):
         SCOPES = [ 'https://www.googleapis.com/auth/spreadsheets.readonly' ]
-        open("token.json", "w").write(str({
+        open("ppp-token.json", "w").write(str({
                     "token": f'{getenv("G_TOKEN")}',
                     "refresh_token": f'{getenv("G_REFRESH_TOKEN")}',
                     "token_uri": "https://oauth2.googleapis.com/token",
@@ -117,7 +117,7 @@ class DeskRobot:
                     "scopes": SCOPES,
                     "expiry": f"{(dt.now() + td(hours = 5)).isoformat()}Z"
                 }).replace("\'", "\""))
-        return Credentials.from_authorized_user_file("token.json", SCOPES)
+        return Credentials.from_authorized_user_file("ppp-token.json", SCOPES)
 
     def __get_worksheet_info(self):
         log.info("Carregando informações da planilha google.")
@@ -162,7 +162,7 @@ class DeskRobot:
 
                 self.__excel_app.Application.Run("ppp.xlsm!ppp.replace_info", r"{{ DT-HOJE }}", dt.now().strftime("%d/%m/%Y"), template)
                 log.info(f"Inserindo data de hoje: {dt.now().strftime('%d/%m/%Y')}")
-                pathfilename = f"{dirname(__file__)}\documents\{row[r'{{ NOME }}'].lower()}"
+                pathfilename = f"{dirname(__file__)}\ppp-docs\{row[r'{{ NOME }}'].lower()}"
                 log.info(f"Salvando arquivos.")
                 self.__word_doc.SaveAs(f"{pathfilename}.docx")
                 self.__word_doc.SaveAs(f"{pathfilename}.pdf", FileFormat = 17)
