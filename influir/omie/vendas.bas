@@ -48,13 +48,6 @@ Sub get_vendas()
         .Range("P6:S" & ultima_linha + 3).Style = "Currency"
         .Range("Y6:Y" & ultima_linha + 3).Style = "Currency"
 
-        With .Sort
-            .SortFields.Clear
-            .SortFields.Add2 Key:=Range("G:G"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
-            .SetRange Rows("5:1048576")
-            .Header = xlYes
-            .Apply
-        End With
     End With
     Call MsgBox("agora todos as vendas da planilha escolhida estão aqui! :D", vbInformation, "Base Atualizada")
     Call liga_desliga(True)

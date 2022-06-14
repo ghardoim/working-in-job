@@ -82,7 +82,8 @@ Sub get_produtos()
         .Columns("A:S").ColumnWidth = 25
         .Columns("H:M").Style = "Currency"
         Call format_header(.Name)
-
+        Sheets("BASE_APOIO").Range("A:A").Value = .Range("R:R").Value
+        Sheets("BASE_APOIO").Range("C:C").Value = .Range("F:F").Value
         .Range("A1").Select
     End With
     Call MsgBox("agora todos os produtos cadastrados no bling estão aqui! :D", vbInformation, "Base Atualizada")
