@@ -26,6 +26,8 @@ Sub get_produtos()
 
     linha = 6
     Do While True
+        If 0 = pagina Mod 10 Then Application.Wait (Now + TimeValue("0:00:30"))
+
         With request
             .Open "POST", api_url & endpoint & "?token=" & api_key & "&formato=JSON&pagina=" & pagina
             .Send
@@ -48,6 +50,6 @@ Sub get_produtos()
         Next
         pagina = pagina + 1
     Loop
-    Call liga_desliga(False)
+    Call liga_desliga(True)
     Call MsgBox("agora todos os produtos cadastrados no tiny estão aqui! :D", vbInformation, "Base Atualizada")
 End Sub
